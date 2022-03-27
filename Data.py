@@ -17,7 +17,7 @@ def getBase():
     return json.load(open(jbase))
 
 def processString(teamName):
-    return str(teamName.encode('ascii', 'xmlcharrefreplace'))
+    return str(teamName.encode('ascii', 'xmlcharrefreplace'))[2:-1]
 
 def printTeams():
     teams = getTeams()
@@ -88,6 +88,8 @@ def updateCost(sticker, points):
 
 def updateTeamName(team, name):
     teams = getTeams()
+    team = processString(team)
+    name = processString(name)
     if team in teams:
         teams[name] = teams[team]
         teams.pop(team)
@@ -98,11 +100,11 @@ def updateTeamName(team, name):
     return "Team does not exist."
 
 def addSticker(teamName, stickerName, stickerCode):
-    i = 0
     #First get data
     info = getData()
     teams = getTeams()
     full_name = stickerName + stickerCode
+    teamName = processString(teamName)
     #Find index for sticker
     if full_name not in info:
         return "This sticker does not exist, please check your code."
@@ -130,6 +132,7 @@ def addSticker(teamName, stickerName, stickerCode):
     
 def addTeam(teamName):
     teams = getTeams()
+    teamName = processString(teamName)
     if teamName not in teams:
         teams[teamName] = getBase()
         jfile = open(jteams, 'w')
@@ -139,6 +142,7 @@ def addTeam(teamName):
 
 def removeTeam(teamName):
     teams = getTeams()
+    teamName = processString(teamName)
     if teamName in teams:
         teams.pop(teamName)
         jfile = open(jteams, 'w')
@@ -149,17 +153,21 @@ def removeTeam(teamName):
 
 
 def getScore(teamName):
+    teamName = processString(teamName)
     return getTeams()[teamName]["score"]
 
 def getCount(teamName):
+    teamName = processString(teamName)
     return getTeams()[teamName]["count"]
 
 def printScoreAndCount(teamName):
+    teamName = processString(teamName)
     if teamName not in getTeams():
         return messages["validMessage"]
     return "Score is: " + str(getScore(teamName)) + "\nYou have found this many stickers: " + str(getCount(teamName))
 
 def getHint(teamName):
+    teamName = processString(teamName)
     team = getTeams()[teamName]
     data = getData()
     hints = []
