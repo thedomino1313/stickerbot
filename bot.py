@@ -53,36 +53,32 @@ async def on_raw_message_edit(msg):
 '==========================================================================================================================================='
 'Bot Debug Commands'
 
-@bot.command(name='status', help="Gives bot's status.",pass_context=True)
-async def status(ctx):
-    # Checks if Responsive
-    await ctx.send(messages["statusMessage"])
-
 # Checking Bot Ping
 @bot.command(name='ping', help="Gives bot's ping.",pass_context=True)
 async def ping(ctx):
     await ctx.send('Welcome Bots Latency: {0}'.format(round(bot.latency, 2)))
 
+@bot.command(name='status', help="Gives bot's status.",pass_context=True)
+async def status(ctx):
+    # Checks if Responsive
+    await ctx.send(messages["statusMessage"])
+
 '==========================================================================================================================================='
 'Moderation Commands'
 
-# Giving a member a role!
-@bot.command(name='give_role', help="Gives a member a specific role/assigns team",pass_context=True)
-async def give_role(ctx, user: discord.Member, role: discord.Role): # !giverole [Member] [Role]
+# Mod Help
+@bot.command(name="modhelp")
+async def modhelp(ctx):
     if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles:
         await ctx.send(messages["noAccess"])
         return
     
-    # Adds the Role to the user 
-    await user.add_roles(role)
-
-    # Sends confirmation message
-    await ctx.send(f"The User {ctx.author.name}, {user.name} has been giving a role called: {role.name}") ##FOR DEBUGGING REMOVE THIS LINE
+    await ctx.channel.send(messages["modHelpMessage"])
 
 # Creating A Private Text Channel 
-@bot.command(name='create_Pchannel', help="Creates the private team channel")
+@bot.command(name='createchannel', help="Creates the private team channel")
 @commands.has_permissions(manage_channels=True, manage_roles=True)
-async def create_Pchannel(ctx, *, ChannelName_Role=''):
+async def createchannel(ctx, *, ChannelName_Role=''):
     if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles:
         await ctx.send(messages["noAccess"])
         return
@@ -106,47 +102,22 @@ async def create_Pchannel(ctx, *, ChannelName_Role=''):
     await guild.create_text_channel(ChannelName_Role, overwrites=overwrites)
     # await ctx.author.add_roles(autorize_role)
 
-# Scoreboard Generation
-@bot.command(help="Formats the scoreboard with the most up to date information", pass_context=True)
-async def scoreboard(ctx):
-    if ctx.message.channel.id not in [950575250112909452, 957269997237993512]:
-        await ctx.send("Looks like this isn't the right channel for that, try again in the correct location!")
+# Giving a member a role!
+@bot.command(name='giverole', help="Gives a member a specific role/assigns team",pass_context=True)
+async def giverole(ctx, user: discord.Member, role: discord.Role): # !giverole [Member] [Role]
+    if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles:
+        await ctx.send(messages["noAccess"])
         return
     
-    scores = "```" + Data.scoreBoard() + "```"
+    # Adds the Role to the user 
+    await user.add_roles(role)
 
-    embedded = discord.Embed(title = "LeaderBoard", description=scores, color = 0xF1C40F)
-    await ctx.send(embed=embedded)
-
-# Delete a team
-@bot.command(help="Removes a team from the server and database", pass_context=True)
-async def removeteam(ctx, team=''):
-    if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles:
-        await ctx.send(messages["noAccess"])
-    
-    elif team == '':
-        await ctx.send("Please list a team name to remove.")
-    
-    else:
-        team = team.lower()
-        await ctx.send(Data.removeTeam(team))
-        channel = discord.utils.get(ctx.guild.channels, name=team)
-        await channel.delete()
-        role = discord.utils.get(ctx.guild.roles, name=team)
-        await role.delete()
-
-# Send the list of teams
-@bot.command(help="View the full list of teams", pass_context=True)
-async def teamlist(ctx):
-    if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles:
-        await ctx.send(messages["noAccess"])
-    
-    else:
-        await ctx.send(Data.printTeams())
+    # Sends confirmation message
+    await ctx.send(f"The User {ctx.author.name}, {user.name} has been giving a role called: {role.name}") ##FOR DEBUGGING REMOVE THIS LINE
 
 # File dump and exit
 @bot.command(help="Makes it die and dumps all its files.", pass_context=True)
-async def keep_inventory(ctx):
+async def keepinventory(ctx):
     if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles:
         await ctx.send(messages["noAccess"])
         return
@@ -165,8 +136,61 @@ async def kill(ctx):
     await ctx.send("Goodbye for now. <3")
     exit("All done!")
 
+# Delete a team
+@bot.command(help="Removes a team from the server and database", pass_context=True)
+async def removeteam(ctx, team=''):
+    if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles:
+        await ctx.send(messages["noAccess"])
+    
+    elif team == '':
+        await ctx.send("Please list a team name to remove.")
+    
+    else:
+        team = team.lower()
+        await ctx.send(Data.removeTeam(team))
+        channel = discord.utils.get(ctx.guild.channels, name=team)
+        await channel.delete()
+        role = discord.utils.get(ctx.guild.roles, name=team)
+        await role.delete()
+
+# Scoreboard Generation
+@bot.command(help="Formats the scoreboard with the most up to date information", pass_context=True)
+async def scoreboard(ctx):
+    if ctx.message.channel.id not in [950575250112909452, 957269997237993512]:
+        await ctx.send("Looks like this isn't the right channel for that, try again in the correct location!")
+        return
+    
+    scores = "```" + Data.scoreBoard() + "```"
+
+    embedded = discord.Embed(title = "LeaderBoard", description=scores, color = 0xF1C40F)
+    await ctx.send(embed=embedded)
+
+# Send the list of teams
+@bot.command(help="View the full list of teams", pass_context=True)
+async def teamlist(ctx):
+    if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles:
+        await ctx.send(messages["noAccess"])
+    
+    else:
+        await ctx.send(Data.printTeams())
+
 '==========================================================================================================================================='
 'Standard User Commands'
+
+# Sticker code input
+@bot.command(help="Submit a code you have found: <name> <key>", pass_context=True)
+async def code(ctx, codeword='', key=''):
+    team = ctx.message.channel
+
+    if team.name not in Data.getTeams():
+        await ctx.send(messages["validMessage"])
+        return
+
+    if codeword == '' or key == '':
+        await ctx.send("Invalid input, make sure you input is in format `!code <sticker> <authCode>")
+        return
+
+    await ctx.send(Data.addSticker(ctx.channel.name, codeword, key))
 
 # Creates a new team and adds the founding member 
 @bot.command(help="Create a new team!", pass_context=True)
@@ -224,6 +248,22 @@ async def createteam(ctx,*,role_name=''):
     else: # TEAM ALREADY EXISTS BREAK OFF!
         await ctx.send(f"This team/role already exists try another name!")  # Checks for error!
 
+# Help function WORK ON THIS
+@bot.command(help="The worse help function", pass_context=True)
+async def help(ctx):
+    await ctx.send(messages["helpMessage"])
+
+# Outputs hints
+@bot.command(help='Request a hint, as well as viewing your current hints.',pass_context=True)
+async def hint(ctx):
+    team = ctx.message.channel
+
+    if team.name not in Data.getTeams():
+        await ctx.send(messages["validMessage"])
+        return
+
+    await ctx.send(Data.getHint(team.name))
+
 # Adds user to an existing team
 @bot.command(help="Join a preexisting team", pass_context=True)
 async def jointeam(ctx, roleName=''):
@@ -249,41 +289,10 @@ async def jointeam(ctx, roleName=''):
             await ctx.author.add_roles(roleToAdd)
             await ctx.send("Role has been added!")
 
-# Sticker code input
-@bot.command(help="Submit a code you have found: <name> <key>", pass_context=True)
-async def code(ctx, codeword='', key=''):
-    team = ctx.message.channel
-
-    if team.name not in Data.getTeams():
-        await ctx.send(messages["validMessage"])
-        return
-
-    if codeword == '' or key == '':
-        await ctx.send("Invalid input, make sure you input is in format `!code <sticker> <authCode>")
-        return
-
-    await ctx.send(Data.addSticker(ctx.channel.name, codeword, key))
-    
 # Outputs score
 @bot.command(help="Displays your team's score", pass_context=True)
 async def score(ctx):
     await ctx.send(Data.printScoreAndCount(ctx.message.channel.name))
-
-# Help function WORK ON THIS
-@bot.command(help="The worse help function", pass_context=True)
-async def help(ctx):
-    await ctx.send(messages["helpMessage"])
-
-# Outputs hints
-@bot.command(help='Request a hint, as well as viewing your current hints.',pass_context=True)
-async def hint(ctx):
-    team = ctx.message.channel
-
-    if team.name not in Data.getTeams():
-        await ctx.send(messages["validMessage"])
-        return
-
-    await ctx.send(Data.getHint(team.name))
 
 '==========================================================================================================================================='
 
