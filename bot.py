@@ -204,16 +204,11 @@ async def WBhelp(ctx):
 
 @bot.command(help="Formats the scoreboard with the most up to date information", pass_context=True, commands_heading="Moderation")
 async def WBscoreboard(ctx):
-    if ctx.message.channel.id not in [950575250112909452, 852725464518361108]:
+    if ctx.message.channel.id not in [950575250112909452, 957269997237993512]:
         await ctx.send("Looks like this isn't the right channel for that, try again in the correct location!")
         return
-
-    Data.scoreBoard()
-    file = open("data.txt", "r", encoding="utf-8")
     
-    scores = "```" + file.read() + "```"
-    
-    file.close()
+    scores = "```" + Data.scoreBoard() + "```"
 
     embedded = discord.Embed(title = "LeaderBoard", description=scores, color = 0xF1C40F)
     await ctx.send(embed=embedded)
