@@ -50,7 +50,9 @@ async def on_raw_message_edit(msg):
     msg_full = await channel.fetch_message(msg.message_id)
     await bot.process_commands(msg_full)
 
-# Checking Bot Status
+'==========================================================================================================================================='
+'Bot  Debug Commands'
+
 @bot.command(name='WBstatus', help="Gives Bots Status",pass_context=True, commands_heading="Debug")
 async def WBstatus(ctx): # !WBstatus[Member] [Role]
     # Checks if Responsive
@@ -60,6 +62,9 @@ async def WBstatus(ctx): # !WBstatus[Member] [Role]
 @bot.command(name='WBping', help="Gives Bots Ping",pass_context=True, commands_heading="Debug")
 async def WBping(ctx):
     await ctx.send('Welcome Bots Latency: {0}'.format(round(bot.latency, 2)))
+
+'==========================================================================================================================================='
+'Moderation Commands'
 
 # Giving a member a role!
 @bot.command(name='WBgive_role', help="Gives a member a specific role/assigns team",pass_context=True, commands_heading="Moderation")
@@ -78,6 +83,10 @@ async def WBgive_role(ctx, user: discord.Member, role: discord.Role): # !giverol
 @bot.command(name='WBcreate_Pchannel', help="Creates the private team channel", commands_heading="Moderation")
 @commands.has_permissions(manage_channels=True, manage_roles=True)
 async def WBcreate_Pchannel(ctx, *, ChannelName_Role=''):
+    if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles:
+        await ctx.send(messages["noAccess"])
+        return
+    
     if ChannelName_Role == '':
         await ctx.send("Please list a channel name to create.")
     guild = ctx.guild
@@ -97,9 +106,69 @@ async def WBcreate_Pchannel(ctx, *, ChannelName_Role=''):
     await guild.create_text_channel(ChannelName_Role, overwrites=overwrites)
     # await ctx.author.add_roles(autorize_role)
 
-##  Advanced Command Block Sets
+# Scoreboard Generation
+@bot.command(help="Formats the scoreboard with the most up to date information", pass_context=True, commands_heading="Moderation")
+async def WBscoreboard(ctx):
+    if ctx.message.channel.id not in [950575250112909452, 957269997237993512]:
+        await ctx.send("Looks like this isn't the right channel for that, try again in the correct location!")
+        return
+    
+    scores = "```" + Data.scoreBoard() + "```"
 
-# Creating the team and gets member to join the team with a command 
+    embedded = discord.Embed(title = "LeaderBoard", description=scores, color = 0xF1C40F)
+    await ctx.send(embed=embedded)
+
+# Delete a team
+@bot.command(help="Removes a team from the server and database", pass_context=True, commands_heading="Moderation")
+async def WBremoveteam(ctx, team=''):
+    if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles:
+        await ctx.send(messages["noAccess"])
+    
+    elif team == '':
+        await ctx.send("Please list a team name to remove.")
+    
+    else:
+        team = team.lower()
+        await ctx.send(Data.removeTeam(team))
+        channel = discord.utils.get(ctx.guild.channels, name=team)
+        await channel.delete()
+        role = discord.utils.get(ctx.guild.roles, name=team)
+        await role.delete()
+
+# Send the list of teams
+@bot.command(help="View the full list of teams", pass_context=True, commands_heading="Moderation")
+async def WBteamlist(ctx):
+    if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles:
+        await ctx.send(messages["noAccess"])
+    
+    else:
+        await ctx.send(Data.printTeams())
+
+# File dump and exit
+@bot.command(help="Makes it die and dumps all its files.", pass_context=True)
+async def keep_inventory(ctx):
+    if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles:
+        await ctx.send(messages["noAccess"])
+        return
+    await ctx.send("Goodbye for now. <3")
+    channel = discord.utils.get(ctx.guild.channels, name="backup")
+    for f in lists["files"]:
+        await channel.send(file=discord.File(f))
+    exit("All done!")
+
+# Exit without file dump
+@bot.command(help="Makes it die.", pass_context=True)
+async def kill(ctx):
+    if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles:
+        await ctx.send(messages["noAccess"])
+        return
+    await ctx.send("Goodbye for now. <3")
+    exit("All done!")
+
+'==========================================================================================================================================='
+'Standard User Commands'
+
+# Creates a new team and adds the founding member 
 @bot.command(help="Create a new team!", pass_context=True, commands_heading="Hunt Commands")
 async def WBcreateteam(ctx,*,role_name=''):
     if role_name == '':
@@ -155,7 +224,7 @@ async def WBcreateteam(ctx,*,role_name=''):
     else: # TEAM ALREADY EXISTS BREAK OFF!
         await ctx.send(f"This team/role already exists try another name!")  # Checks for error!
 
-# Joining already created team Command
+# Adds user to an existing team
 @bot.command(help="Join a preexisting team", pass_context=True, commands_heading="Hunt Commands")
 async def WBjointeam(ctx, roleName=''):
     if roleName == '':
@@ -180,6 +249,7 @@ async def WBjointeam(ctx, roleName=''):
             await ctx.author.add_roles(roleToAdd)
             await ctx.send("Role has been added!")
 
+# Sticker code input
 @bot.command(help="Submit a code you have found: <name> <key>", pass_context=True, commands_heading="Hunt Commands")
 async def WBcode(ctx, codeword='', key=''):
     team = ctx.message.channel
@@ -194,49 +264,17 @@ async def WBcode(ctx, codeword='', key=''):
 
     await ctx.send(Data.addSticker(ctx.channel.name, codeword, key))
     
+# Outputs score
 @bot.command(help="Displays your team's score", pass_context=True, commands_heading="Hunt Commands")
 async def WBscore(ctx):
     await ctx.send(Data.printScoreAndCount(ctx.message.channel.name))
 
+# Help function WORK ON THIS
 @bot.command(help="The worse help function", pass_context=True, commands_heading="Help")
 async def WBhelp(ctx):
     await ctx.send(messages["helpMessage"])
 
-@bot.command(help="Formats the scoreboard with the most up to date information", pass_context=True, commands_heading="Moderation")
-async def WBscoreboard(ctx):
-    if ctx.message.channel.id not in [950575250112909452, 957269997237993512]:
-        await ctx.send("Looks like this isn't the right channel for that, try again in the correct location!")
-        return
-    
-    scores = "```" + Data.scoreBoard() + "```"
-
-    embedded = discord.Embed(title = "LeaderBoard", description=scores, color = 0xF1C40F)
-    await ctx.send(embed=embedded)
-
-@bot.command(help="Removes a team from the server and database", pass_context=True, commands_heading="Moderation")
-async def WBremoveteam(ctx, team=''):
-    if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles:
-        await ctx.send(messages["noAccess"])
-    
-    elif team == '':
-        await ctx.send("Please list a team name to remove.")
-    
-    else:
-        team = team.lower()
-        await ctx.send(Data.removeTeam(team))
-        channel = discord.utils.get(ctx.guild.channels, name=team)
-        await channel.delete()
-        role = discord.utils.get(ctx.guild.roles, name=team)
-        await role.delete()
-
-@bot.command(help="View the full list of teams", pass_context=True, commands_heading="Moderation")
-async def WBteamlist(ctx):
-    if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles:
-        await ctx.send(messages["noAccess"])
-    
-    else:
-        await ctx.send(Data.printTeams())
-
+# Outputs hints
 @bot.command(help='Request a hint, as well as viewing your current hints.',pass_context=True, commands_heading="Hunt Commands")
 async def WBhint(ctx):
     team = ctx.message.channel
@@ -247,23 +285,6 @@ async def WBhint(ctx):
 
     await ctx.send(Data.getHint(team.name))
 
-@bot.command(help="Makes it die and dumps all its files.", pass_context=True)
-async def keep_inventory(ctx):
-    if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles:
-        await ctx.send(messages["noAccess"])
-        return
-    await ctx.send("Goodbye for now. <3")
-    channel = discord.utils.get(ctx.guild.channels, name="backup")
-    for f in lists["files"]:
-        await channel.send(file=discord.File(f))
-    exit("All done!")
-
-@bot.command(help="Makes it die.", pass_context=True)
-async def kill(ctx):
-    if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles:
-        await ctx.send(messages["noAccess"])
-        return
-    await ctx.send("Goodbye for now. <3")
-    exit("All done!")
+'==========================================================================================================================================='
 
 bot.run(TOKEN) # end of bot
