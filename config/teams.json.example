@@ -1,0 +1,12 @@
+{
+    "README": "This is a base team used just for an example. Before use, please copy this file and change the name to teams.json, as well as change the contents to just {}",
+    "baseteam": {
+        "stickers": [],
+        "hint": [],
+        "ghint": [],
+        "score": 0,
+        "count": 0,
+        "ghintcomplete": false,
+        "lastnewhint": 0
+    }
+}
