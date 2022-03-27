@@ -16,6 +16,9 @@ def getTeams():
 def getBase():
     return json.load(open(jbase))
 
+def processString(teamName):
+    return str(teamName.encode('ascii', 'xmlcharrefreplace'))
+
 def printTeams():
     teams = getTeams()
     s = ''
@@ -126,7 +129,7 @@ def addSticker(teamName, stickerName, stickerCode):
         return s
     
 def addTeam(teamName):
-    teamName = teamName.replace(" ", "", teamName.count(" "))
+    teamName = teamName.replace(" ", "")
     teams = getTeams()
     if teamName not in teams:
         teams[teamName] = getBase()
@@ -273,4 +276,3 @@ def addtoteam():
     jfile = open(jteams, 'w')
     json.dump(teams, jfile)
     jfile.close()
-
