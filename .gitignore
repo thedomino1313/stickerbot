@@ -1,0 +1,5 @@
+# Constantly edited, user specific
+teams.json
+
+# User specific, contains sensitive info
+config/config.json
