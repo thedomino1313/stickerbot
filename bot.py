@@ -8,7 +8,7 @@ from discord.ext import commands    # gets the bot commands archive
 from discord.utils import get       # gets the finding functions
 from discord.ext import commands
 
-import Data
+import data
 
 messages = json.load(open("./config/messages.json"))
 lists = json.load(open("./config/lists.json"))
@@ -156,7 +156,7 @@ async def removeteam(ctx, *, team=''):
     
     else:
         team = team.lower()
-        await ctx.send(Data.removeTeam(team))
+        await ctx.send(data.removeTeam(team))
         channel = discord.utils.get(ctx.guild.channels, name=team.replace(" ", "-"))
         await channel.delete()
         role = discord.utils.get(ctx.guild.roles, name=team)
@@ -173,7 +173,7 @@ async def scoreboard(ctx):
         await ctx.send("Looks like this isn't the right channel for that, try again in the correct location!")
         return
     
-    scores = "```" + Data.scoreBoard() + "```"
+    scores = "```" + data.scoreBoard() + "```"
 
     embedded = discord.Embed(title = "LeaderBoard", description=scores, color = 0xF1C40F)
     await ctx.send(embed=embedded)
@@ -185,7 +185,7 @@ async def teamlist(ctx):
         await ctx.send(messages["noAccess"])
     
     else:
-        await ctx.send(Data.printTeams())
+        await ctx.send(data.printTeams())
 
 '==========================================================================================================================================='
 'Standard User Commands'
@@ -195,7 +195,7 @@ async def teamlist(ctx):
 async def code(ctx, codeword='', key=''):
     team = ctx.message.channel
 
-    if team.name not in Data.getTeams():
+    if team.name not in data.getTeams():
         await ctx.send(messages["validMessage"])
         return
 
@@ -203,7 +203,7 @@ async def code(ctx, codeword='', key=''):
         await ctx.send("Invalid input, make sure you input is in format `!code <sticker> <authCode>")
         return
 
-    await ctx.send(Data.addSticker(ctx.channel.name, codeword, key))
+    await ctx.send(data.addSticker(ctx.channel.name, codeword, key))
 
 # Creates a new team and adds the founding member 
 @bot.command(help="Create a new team!", pass_context=True)
@@ -255,7 +255,7 @@ async def createteam(ctx,*,role_name=''):
         
         await newChan.send(embed=embedmessage)  # Sends DM to Channel
 
-        Data.addTeam(role_name)
+        data.addTeam(role_name)
 
         team_channel_id = newChan.id
         await ctx.send("Your shiny new team awaits you! <#{}>".format(team_channel_id))
@@ -273,11 +273,11 @@ async def help(ctx):
 async def hint(ctx):
     team = ctx.message.channel
 
-    if team.name not in Data.getTeams():
+    if team.name not in data.getTeams():
         await ctx.send(messages["validMessage"])
         return
 
-    await ctx.send(Data.getHint(team.name))
+    await ctx.send(data.getHint(team.name))
 
 # Adds user to an existing team
 @bot.command(help="Join a preexisting team", pass_context=True)
@@ -307,7 +307,7 @@ async def jointeam(ctx, roleName=''):
 # Outputs score
 @bot.command(help="Displays your team's score", pass_context=True)
 async def score(ctx):
-    await ctx.send(Data.printScoreAndCount(ctx.message.channel.name))
+    await ctx.send(data.printScoreAndCount(ctx.message.channel.name))
 
 '==========================================================================================================================================='
 
