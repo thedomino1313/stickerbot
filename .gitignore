@@ -3,3 +3,5 @@ teams.json
 
 # User specific, contains sensitive info
 config/config.json
+
+__pycache__/

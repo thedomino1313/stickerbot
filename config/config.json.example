@@ -1,4 +1,5 @@
 {
+    "README": "Please copy this file and change the name to config.json, as well as fill out the info below.",
     "token": "inserttokentocontinue",
     "guild": "Guild Name Goes Here",
     "backup": "backupChannelId (int, not a string)",
