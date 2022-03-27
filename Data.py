@@ -248,24 +248,23 @@ def scoreBoard():
     order = (sorted(scoreDict.items(), key = lambda x:x[1], reverse=True))
 
 
-    file = open("data.txt", "w+", encoding="utf-8")
-    file.write("╔" + "═"*(maxLen +2) + "╦" + "═"*(8) +"╦" + "═"*(8) + "╗" + "\n")
-    file.write("║" + "Name".center(maxLen + 2, " ") + "║" +  "Score".center(8, " ") + "║" +"Count".center(8, " ") + "║" +"\n")
-    file.write
+    s = ""
+    s += ("╔" + "═"*(maxLen +2) + "╦" + "═"*(8) +"╦" + "═"*(8) + "╗" + "\n")
+    s += ("║" + "Name".center(maxLen + 2, " ") + "║" +  "Score".center(8, " ") + "║" +"Count".center(8, " ") + "║" +"\n")
 
-    file.write("╠"+ "═"*(maxLen+2) + "╬" + "═"*(8) +  "╬" + "═"*(8)+ "║" + "\n")
+    s += ("╠"+ "═"*(maxLen+2) + "╬" + "═"*(8) +  "╬" + "═"*(8)+ "║" + "\n")
 
     i = 0
     for t in order:
-        file.write("║" + str(t[0]).center(maxLen + 2, " ") + "║" + str(t[1][0]).center(8, " ") + "║" + str(t[1][1]).center(8, " ") + "║" + "\n")
+        s += ("║" + str(t[0]).center(maxLen + 2, " ") + "║" + str(t[1][0]).center(8, " ") + "║" + str(t[1][1]).center(8, " ") + "║" + "\n")
         
         if i!= len(order) - 1:
-            file.write("╠"+ "═"*(maxLen+2) + "╬" + "═"*(8) +  "╬" + "═"*(8)+ "║" + "\n")
+            s += ("╠"+ "═"*(maxLen+2) + "╬" + "═"*(8) +  "╬" + "═"*(8)+ "║" + "\n")
 
         i+=1
 
-    file.write("╚" + "═"*(maxLen +2) + "╩" + "═"*(8) +"╩" + "═"*(8) + "╝" + "\n")
-    file.close()
+    s += ("╚" + "═"*(maxLen +2) + "╩" + "═"*(8) +"╩" + "═"*(8) + "╝" + "\n")
+    return s
 
 def addtoteam():
     teams = getTeams()
