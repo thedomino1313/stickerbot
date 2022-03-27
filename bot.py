@@ -1,6 +1,5 @@
 # bot.py
 
-import os
 import json
 
 import discord
