@@ -147,7 +147,7 @@ async def kill(ctx):
 
 # Delete a team
 @bot.command(help="Removes a team from the server and database", pass_context=True)
-async def removeteam(ctx, team=''):
+async def removeteam(ctx, *, team=''):
     if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles:
         await ctx.send(messages["noAccess"])
     
@@ -157,7 +157,7 @@ async def removeteam(ctx, team=''):
     else:
         team = team.lower()
         await ctx.send(Data.removeTeam(team))
-        channel = discord.utils.get(ctx.guild.channels, name=team)
+        channel = discord.utils.get(ctx.guild.channels, name=team.replace(" ", "-"))
         await channel.delete()
         role = discord.utils.get(ctx.guild.roles, name=team)
         await role.delete()
@@ -211,7 +211,11 @@ async def createteam(ctx,*,role_name=''):
     if role_name == '':
         await ctx.send("Please list a team name to create.")
         return
-    role_name = "".join([x for x in role_name if x.isascii()]).lower()
+    while "  " in role_name:
+        role_name = role_name.replace("  ", " ")
+    
+    # role_name = "".join([x for x in role_name if x.isascii()]).lower()
+    
     # Getting the Command Users ID
     author = ctx.author 
     guild = ctx.guild               # server name 
