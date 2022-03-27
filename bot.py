@@ -131,7 +131,7 @@ async def keepinventory(ctx):
         return
     
     await ctx.send("Goodbye for now. <3")
-    channel = discord.utils.get(ctx.guild.channels, name=config["backup"])
+    channel = discord.utils.get(ctx.guild.channels, id=config["backup"])
     for f in lists["files"]:
         await channel.send(file=discord.File(f))
     exit("All done!")
