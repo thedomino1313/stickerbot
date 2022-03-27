@@ -23,7 +23,7 @@ intents = discord.Intents.default()
 intents.members = True # Subscribe to the privileged members intent.
 bot = commands.Bot(command_prefix='!', intents=intents)
 
-# bot.remove_command('help')
+bot.remove_command('help')
 
 ## EVENTS
 @bot.event # Connection Information
@@ -51,24 +51,24 @@ async def on_raw_message_edit(msg):
     await bot.process_commands(msg_full)
 
 '==========================================================================================================================================='
-'Bot  Debug Commands'
+'Bot Debug Commands'
 
-@bot.command(name='WBstatus', help="Gives Bots Status",pass_context=True, commands_heading="Debug")
-async def WBstatus(ctx): # !WBstatus[Member] [Role]
+@bot.command(name='status', help="Gives bot's status.",pass_context=True)
+async def status(ctx):
     # Checks if Responsive
     await ctx.send(messages["statusMessage"])
 
 # Checking Bot Ping
-@bot.command(name='WBping', help="Gives Bots Ping",pass_context=True, commands_heading="Debug")
-async def WBping(ctx):
+@bot.command(name='ping', help="Gives bot's ping.",pass_context=True)
+async def ping(ctx):
     await ctx.send('Welcome Bots Latency: {0}'.format(round(bot.latency, 2)))
 
 '==========================================================================================================================================='
 'Moderation Commands'
 
 # Giving a member a role!
-@bot.command(name='WBgive_role', help="Gives a member a specific role/assigns team",pass_context=True, commands_heading="Moderation")
-async def WBgive_role(ctx, user: discord.Member, role: discord.Role): # !giverole [Member] [Role]
+@bot.command(name='give_role', help="Gives a member a specific role/assigns team",pass_context=True)
+async def give_role(ctx, user: discord.Member, role: discord.Role): # !giverole [Member] [Role]
     if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles:
         await ctx.send(messages["noAccess"])
         return
@@ -80,9 +80,9 @@ async def WBgive_role(ctx, user: discord.Member, role: discord.Role): # !giverol
     await ctx.send(f"The User {ctx.author.name}, {user.name} has been giving a role called: {role.name}") ##FOR DEBUGGING REMOVE THIS LINE
 
 # Creating A Private Text Channel 
-@bot.command(name='WBcreate_Pchannel', help="Creates the private team channel", commands_heading="Moderation")
+@bot.command(name='create_Pchannel', help="Creates the private team channel")
 @commands.has_permissions(manage_channels=True, manage_roles=True)
-async def WBcreate_Pchannel(ctx, *, ChannelName_Role=''):
+async def create_Pchannel(ctx, *, ChannelName_Role=''):
     if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles:
         await ctx.send(messages["noAccess"])
         return
@@ -107,8 +107,8 @@ async def WBcreate_Pchannel(ctx, *, ChannelName_Role=''):
     # await ctx.author.add_roles(autorize_role)
 
 # Scoreboard Generation
-@bot.command(help="Formats the scoreboard with the most up to date information", pass_context=True, commands_heading="Moderation")
-async def WBscoreboard(ctx):
+@bot.command(help="Formats the scoreboard with the most up to date information", pass_context=True)
+async def scoreboard(ctx):
     if ctx.message.channel.id not in [950575250112909452, 957269997237993512]:
         await ctx.send("Looks like this isn't the right channel for that, try again in the correct location!")
         return
@@ -119,8 +119,8 @@ async def WBscoreboard(ctx):
     await ctx.send(embed=embedded)
 
 # Delete a team
-@bot.command(help="Removes a team from the server and database", pass_context=True, commands_heading="Moderation")
-async def WBremoveteam(ctx, team=''):
+@bot.command(help="Removes a team from the server and database", pass_context=True)
+async def removeteam(ctx, team=''):
     if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles:
         await ctx.send(messages["noAccess"])
     
@@ -136,8 +136,8 @@ async def WBremoveteam(ctx, team=''):
         await role.delete()
 
 # Send the list of teams
-@bot.command(help="View the full list of teams", pass_context=True, commands_heading="Moderation")
-async def WBteamlist(ctx):
+@bot.command(help="View the full list of teams", pass_context=True)
+async def teamlist(ctx):
     if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles:
         await ctx.send(messages["noAccess"])
     
@@ -169,8 +169,8 @@ async def kill(ctx):
 'Standard User Commands'
 
 # Creates a new team and adds the founding member 
-@bot.command(help="Create a new team!", pass_context=True, commands_heading="Hunt Commands")
-async def WBcreateteam(ctx,*,role_name=''):
+@bot.command(help="Create a new team!", pass_context=True)
+async def createteam(ctx,*,role_name=''):
     if role_name == '':
         await ctx.send("Please list a team name to create.")
         return
@@ -225,8 +225,8 @@ async def WBcreateteam(ctx,*,role_name=''):
         await ctx.send(f"This team/role already exists try another name!")  # Checks for error!
 
 # Adds user to an existing team
-@bot.command(help="Join a preexisting team", pass_context=True, commands_heading="Hunt Commands")
-async def WBjointeam(ctx, roleName=''):
+@bot.command(help="Join a preexisting team", pass_context=True)
+async def jointeam(ctx, roleName=''):
     if roleName == '':
         await ctx.send("Please list a team name to join.")
         return
@@ -250,8 +250,8 @@ async def WBjointeam(ctx, roleName=''):
             await ctx.send("Role has been added!")
 
 # Sticker code input
-@bot.command(help="Submit a code you have found: <name> <key>", pass_context=True, commands_heading="Hunt Commands")
-async def WBcode(ctx, codeword='', key=''):
+@bot.command(help="Submit a code you have found: <name> <key>", pass_context=True)
+async def code(ctx, codeword='', key=''):
     team = ctx.message.channel
 
     if team.name not in Data.getTeams():
@@ -259,24 +259,24 @@ async def WBcode(ctx, codeword='', key=''):
         return
 
     if codeword == '' or key == '':
-        await ctx.send("Invalid input, make sure you input is in format `!WBcode <sticker> <authCode>")
+        await ctx.send("Invalid input, make sure you input is in format `!code <sticker> <authCode>")
         return
 
     await ctx.send(Data.addSticker(ctx.channel.name, codeword, key))
     
 # Outputs score
-@bot.command(help="Displays your team's score", pass_context=True, commands_heading="Hunt Commands")
-async def WBscore(ctx):
+@bot.command(help="Displays your team's score", pass_context=True)
+async def score(ctx):
     await ctx.send(Data.printScoreAndCount(ctx.message.channel.name))
 
 # Help function WORK ON THIS
-@bot.command(help="The worse help function", pass_context=True, commands_heading="Help")
-async def WBhelp(ctx):
+@bot.command(help="The worse help function", pass_context=True)
+async def help(ctx):
     await ctx.send(messages["helpMessage"])
 
 # Outputs hints
-@bot.command(help='Request a hint, as well as viewing your current hints.',pass_context=True, commands_heading="Hunt Commands")
-async def WBhint(ctx):
+@bot.command(help='Request a hint, as well as viewing your current hints.',pass_context=True)
+async def hint(ctx):
     team = ctx.message.channel
 
     if team.name not in Data.getTeams():
