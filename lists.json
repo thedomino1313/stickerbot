@@ -1,0 +1,4 @@
+{
+    "forbidden": ["@Sticker People", "Scorekeeper", "Scoreboarder", "StickerBot", "StickerMessager", "Sticker-Welcome-Bot"],
+    "files": ["./.env", "./baseteam.json", "./backupdata.json", "./bot.py", "./client_key.json", "./data.json", "./Data.py", "./lists.json", "./messages.json", "./teams.json"]
+}
