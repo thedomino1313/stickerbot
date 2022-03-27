@@ -214,8 +214,6 @@ async def createteam(ctx,*,role_name=''):
     while "  " in role_name:
         role_name = role_name.replace("  ", " ")
     
-    # role_name = "".join([x for x in role_name if x.isascii()]).lower()
-    
     # Getting the Command Users ID
     author = ctx.author 
     guild = ctx.guild               # server name 
