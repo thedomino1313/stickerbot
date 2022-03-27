@@ -129,7 +129,6 @@ def addSticker(teamName, stickerName, stickerCode):
         return s
     
 def addTeam(teamName):
-    teamName = teamName.replace(" ", "")
     teams = getTeams()
     if teamName not in teams:
         teams[teamName] = getBase()
