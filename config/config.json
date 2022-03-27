@@ -1,0 +1,6 @@
+{
+    "token": "inserttokentocontinue",
+    "guild": "Guild Name Goes Here",
+    "backup": "backupChannelId (int, not a string)",
+    "scoreboard": ["list of valid scoreboard channels (ints, not strings)"]
+}

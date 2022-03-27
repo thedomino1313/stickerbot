@@ -8,16 +8,20 @@ from discord.ext import commands    # gets the bot commands archive
 from discord.utils import get       # gets the finding functions
 from discord.ext import commands
 
-from dotenv import load_dotenv
-
 import Data
-
-load_dotenv()
-TOKEN = os.getenv('DISCORD_TOKEN')
-GUILD = os.getenv('DISCORD_GUILD')
 
 messages = json.load(open("./config/messages.json"))
 lists = json.load(open("./config/lists.json"))
+config = json.load(open("./config/config.json"))
+
+if config["token"] == "inserttokentocontinue":
+    exit("Please enter a token to connect to your bot!")
+TOKEN = config["token"]
+
+if config["guild"] == "Guild Name Goes Here":
+    exit("Please enter a guild name to connect to your server!")
+GUILD = config["guild"]
+
 
 intents = discord.Intents.default()
 intents.members = True # Subscribe to the privileged members intent.
@@ -121,8 +125,13 @@ async def keepinventory(ctx):
     if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles:
         await ctx.send(messages["noAccess"])
         return
+    
+    if config["backup"] == "backupChannelId (int, not a string)":
+        await ctx.send("Please set up your backup channel in the config file!")
+        return
+    
     await ctx.send("Goodbye for now. <3")
-    channel = discord.utils.get(ctx.guild.channels, name="backup")
+    channel = discord.utils.get(ctx.guild.channels, name=config["backup"])
     for f in lists["files"]:
         await channel.send(file=discord.File(f))
     exit("All done!")
@@ -156,7 +165,11 @@ async def removeteam(ctx, team=''):
 # Scoreboard Generation
 @bot.command(help="Formats the scoreboard with the most up to date information", pass_context=True)
 async def scoreboard(ctx):
-    if ctx.message.channel.id not in [950575250112909452, 957269997237993512]:
+    if config["scoreboard"] == ["list of valid scoreboard channels (ints, not strings)"]:
+        await ctx.send("Please set up your scoreboard channels in the config file!")
+        return
+
+    if ctx.message.channel.id not in config["scoreboard"]:
         await ctx.send("Looks like this isn't the right channel for that, try again in the correct location!")
         return
     
