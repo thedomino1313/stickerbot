@@ -1,4 +1,4 @@
 {
     "forbidden": ["@Sticker People", "Scorekeeper", "Scoreboarder", "StickerBot", "StickerMessager", "Sticker-Welcome-Bot"],
-    "files": ["./.env", "./baseteam.json", "./backupdata.json", "./bot.py", "./client_key.json", "./data.json", "./Data.py", "./lists.json", "./messages.json", "./teams.json"]
+    "files": ["./config/backupdata.json", "./config/baseteam.json", "./bot.py", "./config/config.json", "./config/data.json", "./Data.py", "./config/lists.json", "./config/messages.json", "./config/teams.json"]
 }
