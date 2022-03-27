@@ -16,8 +16,8 @@ load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 GUILD = os.getenv('DISCORD_GUILD')
 
-messages = json.load(open("messages.json"))
-lists = json.load(open("lists.json"))
+messages = json.load(open("./config/messages.json"))
+lists = json.load(open("./config/lists.json"))
 
 intents = discord.Intents.default()
 intents.members = True # Subscribe to the privileged members intent.

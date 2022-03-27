@@ -2,10 +2,10 @@ import json
 from random import choice
 from time import time
 
-jinfo = "data.json"
-jteams = "teams.json"
-jbase = "baseteam.json"
-messages = json.load(open("messages.json"))
+jinfo = "./config/data.json"
+jteams = "./config/teams.json"
+jbase = "./config/baseteam.json"
+messages = json.load(open("./config/messages.json"))
 
 def getData():
     return json.load(open(jinfo))
