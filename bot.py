@@ -2,6 +2,9 @@
 
 import json
 
+from os.path import exists
+from tabnanny import check
+
 import discord
 from discord.ext import commands    # gets the bot commands archive
 from discord.utils import get       # gets the finding functions
@@ -9,17 +12,33 @@ from discord.ext import commands
 
 import data
 
-messages = json.load(open("./config/messages.json"))
-lists = json.load(open("./config/lists.json"))
-config = json.load(open("./config/config.json"))
+# Makes sure that the bot has been initialized correctly
+def check_configured():
+    if not exists("./config/config.json"):
+        return "Please create the config.json file, or ensure that it is correctly named."
+    if not exists("./config/teams.json"):
+        return "Please create the teams.json file, or ensure that it is correctly named."
+    config = json.load(open("./config/config.json"))
+    if config["token"] == "inserttokentocontinue":
+        return "Please enter a token to connect to your bot!"
+    if config["guild"] == "Guild Name Goes Here":
+        return "Please enter a guild name to connect to your server!"
+    if config["backup"] == "backupChannelId (int, not a string)":
+        return "Please set up your backup channel in the config file!"
+    if config["scoreboard"] == ["list of valid scoreboard channels (ints, not strings)"]:
+        return "Please set up your scoreboard channels in the config file!"
+    return ""
+    
+# Ensure that the user has set up the needed config files.
+if check_configured() != "":
+    exit(check_configured())
 
-if config["token"] == "inserttokentocontinue":
-    exit("Please enter a token to connect to your bot!")
-TOKEN = config["token"]
+MESSAGES = json.load(open("./config/messages.json"))
+LISTS = json.load(open("./config/lists.json"))
+CONFIG = json.load(open("./config/config.json"))
 
-if config["guild"] == "Guild Name Goes Here":
-    exit("Please enter a guild name to connect to your server!")
-GUILD = config["guild"]
+TOKEN = CONFIG["token"]
+GUILD = CONFIG["guild"]
 
 
 intents = discord.Intents.default()
@@ -28,25 +47,28 @@ bot = commands.Bot(command_prefix='!', intents=intents)
 
 bot.remove_command('help')
 
-## EVENTS
-@bot.event # Connection Information
+'==========================================================================================================================================='
+'Event Handlers'
+
+# Connection Information
+@bot.event
 async def on_ready():
     guild = discord.utils.get(bot.guilds, name=GUILD)
-    print(messages["bootMessage"].format(bot.user, guild.name, guild.id))
+    print(MESSAGES["bootMessage"].format(bot.user, guild.name, guild.id))
 
     members = '\n - '.join([member.name for member in guild.members])
     roles = '\n - '.join([channel.name for channel in guild.channels])
     print(f'Guild Members:\n - {members}')
     print(f'Guild Roles:\n - {roles}')
-
     print(f'WelcomeBot Is Online!')
 
-@bot.event  # Sending the Informational DM to the New User!
+# Sending the Informational DM to the New User!
+@bot.event
 async def on_member_join(member):
     await member.create_dm()
-    await member.dm_channel.send(messages["welcomeMessage"].format(member.name))
+    await member.dm_channel.send(MESSAGES["welcomeMessage"].format(member.name))
 
-## CORE BLOCK COMMANDS
+# Allows bot to read commands in edited messages
 @bot.event
 async def on_raw_message_edit(msg):
     channel = await bot.fetch_channel(msg.data["channel_id"])
@@ -61,10 +83,10 @@ async def on_raw_message_edit(msg):
 async def ping(ctx):
     await ctx.send('Welcome Bots Latency: {0}'.format(round(bot.latency, 2)))
 
+# Checks if Responsive
 @bot.command(name='status', help="Gives bot's status.",pass_context=True)
 async def status(ctx):
-    # Checks if Responsive
-    await ctx.send(messages["statusMessage"])
+    await ctx.send(MESSAGES["statusMessage"])
 
 '==========================================================================================================================================='
 'Moderation Commands'
@@ -72,74 +94,71 @@ async def status(ctx):
 # Mod Help
 @bot.command(name="modhelp")
 async def modhelp(ctx):
-    if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles:
-        await ctx.send(messages["noAccess"])
+    if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles: # Ensures that user has proper permissions
+        await ctx.send(MESSAGES["noAccess"])
         return
     
-    await ctx.channel.send(messages["modHelpMessage"])
+    await ctx.channel.send(MESSAGES["modHelpMessage"])
 
 # Creating A Private Text Channel 
 @bot.command(name='createchannel', help="Creates the private team channel")
 @commands.has_permissions(manage_channels=True, manage_roles=True)
 async def createchannel(ctx, *, ChannelName_Role=''):
-    if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles:
-        await ctx.send(messages["noAccess"])
+    if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles: # Ensures that user has proper permissions
+        await ctx.send(MESSAGES["noAccess"])
         return
     
-    if ChannelName_Role == '':
+    if ChannelName_Role == '': # Error checking
         await ctx.send("Please list a channel name to create.")
+    
     guild = ctx.guild
-    role =  ChannelName_Role
-    autorize_role = await guild.create_role(name=role)
+    role = ChannelName_Role
+    authorize_role = await guild.create_role(name=role)
     overwrites = {
-        # normies just joining cant see it!
-        guild.default_role: discord.PermissionOverwrite(read_messages=False),
-        # guild.me is the bot so it keeps the bot from taking commands in new channel
-        guild.me: discord.PermissionOverwrite(read_messages=True), 
+        guild.default_role: discord.PermissionOverwrite(read_messages=False), # Those without the team role can't see the channel
+        
+        guild.me: discord.PermissionOverwrite(read_messages=True),  # Ensures bot has permissions to see and speak in the channel
         guild.me: discord.PermissionOverwrite(send_messages=True), 
-        # People with a specific role can see it
-        #ctx.author : discord.PermissionOverwrite(read_messages=True),
-        autorize_role: discord.PermissionOverwrite(read_messages=True),
-        autorize_role: discord.PermissionOverwrite(send_messages=True)
+
+        authorize_role: discord.PermissionOverwrite(read_messages=True), # Enables users with the team role to see the channel
+        authorize_role: discord.PermissionOverwrite(send_messages=True)  # Enables users with the team role to talk in the channel
     }
     await guild.create_text_channel(ChannelName_Role, overwrites=overwrites)
-    # await ctx.author.add_roles(autorize_role)
 
 # Giving a member a role!
-@bot.command(name='giverole', help="Gives a member a specific role/assigns team",pass_context=True)
-async def giverole(ctx, user: discord.Member, role: discord.Role): # !giverole [Member] [Role]
-    if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles:
-        await ctx.send(messages["noAccess"])
+@bot.command(name='giverole', help="Gives a member a specific role/assigns team", pass_context=True)
+async def giverole(ctx, user, *, role):
+    if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles: # Ensures that user has proper permissions
+        await ctx.send(MESSAGES["noAccess"])
         return
     
-    # Adds the Role to the user 
-    await user.add_roles(role)
+    user = ctx.message.mentions[0] # Obtains user
 
-    # Sends confirmation message
-    await ctx.send(f"The User {ctx.author.name}, {user.name} has been giving a role called: {role.name}") ##FOR DEBUGGING REMOVE THIS LINE
+    if get(ctx.message.guild.roles, name=role): # Ensures that the role exists
+        await user.add_roles(get(ctx.message.guild.roles, name=role)) 
+        await ctx.send(f"<@{user.id}> has been given the role <@&{get(ctx.message.guild.roles, name=role).id}>")
+    
+    else:
+        await ctx.send("This role does not exist.")
 
 # File dump and exit
 @bot.command(help="Makes it die and dumps all its files.", pass_context=True)
 async def keepinventory(ctx):
-    if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles:
-        await ctx.send(messages["noAccess"])
-        return
-    
-    if config["backup"] == "backupChannelId (int, not a string)":
-        await ctx.send("Please set up your backup channel in the config file!")
+    if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles: # Ensures that user has proper permissions
+        await ctx.send(MESSAGES["noAccess"])
         return
     
     await ctx.send("Goodbye for now. <3")
-    channel = discord.utils.get(ctx.guild.channels, id=config["backup"])
-    for f in lists["files"]:
+    channel = discord.utils.get(ctx.guild.channels, id=CONFIG["backup"]) # Gets file dump file
+    for f in LISTS["files"]: # Dumps file
         await channel.send(file=discord.File(f))
     exit("All done!")
 
 # Exit without file dump
 @bot.command(help="Makes it die.", pass_context=True)
 async def kill(ctx):
-    if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles:
-        await ctx.send(messages["noAccess"])
+    if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles: # Ensures that user has proper permissions
+        await ctx.send(MESSAGES["noAccess"])
         return
     await ctx.send("Goodbye for now. <3")
     exit("All done!")
@@ -147,28 +166,24 @@ async def kill(ctx):
 # Delete a team
 @bot.command(help="Removes a team from the server and database", pass_context=True)
 async def removeteam(ctx, *, team=''):
-    if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles:
-        await ctx.send(messages["noAccess"])
+    if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles: # Ensures that user has proper permissions
+        await ctx.send(MESSAGES["noAccess"])
     
-    elif team == '':
+    elif team == '': # Error Checking
         await ctx.send("Please list a team name to remove.")
     
     else:
         team = team.lower()
-        await ctx.send(data.removeTeam(team))
+        await ctx.send(data.removeTeam(team)) # Removes the team from the json
         channel = discord.utils.get(ctx.guild.channels, name=team.replace(" ", "-"))
-        await channel.delete()
+        await channel.delete() # Removes the team channel
         role = discord.utils.get(ctx.guild.roles, name=team)
-        await role.delete()
+        await role.delete() # Removes the team role
 
 # Scoreboard Generation
 @bot.command(help="Formats the scoreboard with the most up to date information", pass_context=True)
 async def scoreboard(ctx):
-    if config["scoreboard"] == ["list of valid scoreboard channels (ints, not strings)"]:
-        await ctx.send("Please set up your scoreboard channels in the config file!")
-        return
-
-    if ctx.message.channel.id not in config["scoreboard"]:
+    if ctx.message.channel.id not in CONFIG["scoreboard"]: # Error checking
         await ctx.send("Looks like this isn't the right channel for that, try again in the correct location!")
         return
     
@@ -180,8 +195,8 @@ async def scoreboard(ctx):
 # Send the list of teams
 @bot.command(help="View the full list of teams", pass_context=True)
 async def teamlist(ctx):
-    if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles:
-        await ctx.send(messages["noAccess"])
+    if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles: # Ensures that user has proper permissions
+        await ctx.send(MESSAGES["noAccess"])
     
     else:
         await ctx.send(data.printTeams())
@@ -194,11 +209,11 @@ async def teamlist(ctx):
 async def code(ctx, codeword='', key=''):
     team = ctx.message.channel
 
-    if team.name not in data.getTeams():
-        await ctx.send(messages["validMessage"])
+    if team.name not in data.getTeams(): # Error checking
+        await ctx.send(MESSAGES["validMessage"])
         return
 
-    if codeword == '' or key == '':
+    if codeword == '' or key == '': # Error checking
         await ctx.send("Invalid input, make sure you input is in format `!code <sticker> <authCode>")
         return
 
@@ -207,73 +222,67 @@ async def code(ctx, codeword='', key=''):
 # Creates a new team and adds the founding member 
 @bot.command(help="Create a new team!", pass_context=True)
 async def createteam(ctx,*,role_name=''):
-    if role_name == '':
+    if role_name == '': # Error checking
         await ctx.send("Please list a team name to create.")
         return
-    while "  " in role_name:
+    
+    while "  " in role_name: # Removes excess spaces
         role_name = role_name.replace("  ", " ")
     
-    # Getting the Command Users ID
+    
     author = ctx.author 
-    guild = ctx.guild               # server name 
+    guild = ctx.guild
 
-    # check if that role already exists
-    check_for_duplicate = get(ctx.message.guild.roles, name=role_name)
+    check_for_duplicate = get(ctx.message.guild.roles, name=role_name) # check if that role already exists
 
-    if check_for_duplicate == None: # if the role doesn't exist
-        # create the role and store role id in authorize role!
+    if check_for_duplicate == None:
         authorize_role  = await guild.create_role(name=role_name, colour=discord.Colour(0x0000FF))
 
         sPeople =  discord.utils.get(guild.roles, name="@Sticker People")
 
-        # Overwrites is a list of commands to send to the guild to change permissions
         overwrites = {
-        # normies just joining cant see it!
-        guild.default_role: discord.PermissionOverwrite(read_messages=False),
-        # guild.me is the bot so it keeps the bot from taking commands in new channel
-        guild.me: discord.PermissionOverwrite(read_messages=True), 
-        guild.me: discord.PermissionOverwrite(send_messages=True), 
-        # People with a specific role can see it
-        authorize_role: discord.PermissionOverwrite(read_messages=True)
+            guild.default_role: discord.PermissionOverwrite(read_messages=False), # Those without the team role can't see the channel
+            
+            guild.me: discord.PermissionOverwrite(read_messages=True), # Ensures bot has permissions to see and speak in the channel
+            guild.me: discord.PermissionOverwrite(send_messages=True), 
+            
+            authorize_role: discord.PermissionOverwrite(read_messages=True), # Enables users with the team role to see the channel
+            authorize_role: discord.PermissionOverwrite(send_messages=True)   # Enables users with the team role to talk in the channel
         }
 
         newChan = await guild.create_text_channel(role_name, overwrites=overwrites)
 
-        await newChan.set_permissions(authorize_role, send_messages=True, read_messages = True)
-        await newChan.set_permissions(sPeople, send_messages=True, read_messages = True)
+        await newChan.set_permissions(authorize_role, send_messages=True, read_messages = True) # May be redundant idk
+        await newChan.set_permissions(sPeople, send_messages=True, read_messages = True) # May be redundant idk
 
-        # Adding Team Creator to Role and Team chat!
-        
-        await author.add_roles(authorize_role) # adds the role to the user
+        await author.add_roles(authorize_role) # Adds the role to the user
 
-        # Dming the New Chat with info!
-
-        descript = (messages["newTeamMessage"])
+        descript = (MESSAGES["newTeamMessage"]) # Creating the embed message
         embedmessage=discord.Embed(title=f"Welcome to the {role_name}'s Teams DM", description=descript, color=0x5bcdee)
         embedmessage.set_footer(text="Good Luck!")
         
-        await newChan.send(embed=embedmessage)  # Sends DM to Channel
+        await newChan.send(embed=embedmessage)  # Sends DM to channel
 
         data.addTeam(role_name)
 
         team_channel_id = newChan.id
         await ctx.send("Your shiny new team awaits you! <#{}>".format(team_channel_id))
         
-    else: # TEAM ALREADY EXISTS BREAK OFF!
-        await ctx.send(f"This team/role already exists try another name!")  # Checks for error!
+    else: # Error checking
+        await ctx.send(f"This team/role already exists try another name!")
 
-# Help function WORK ON THIS
-@bot.command(help="The worse help function", pass_context=True)
+# Help function
+@bot.command(help="No longer the worse help function", pass_context=True)
 async def help(ctx):
-    await ctx.send(messages["helpMessage"])
+    await ctx.send(MESSAGES["helpMessage"])
 
 # Outputs hints
 @bot.command(help='Request a hint, as well as viewing your current hints.',pass_context=True)
 async def hint(ctx):
     team = ctx.message.channel
 
-    if team.name not in data.getTeams():
-        await ctx.send(messages["validMessage"])
+    if team.name not in data.getTeams(): # Error checking
+        await ctx.send(MESSAGES["validMessage"])
         return
 
     await ctx.send(data.getHint(team.name))
@@ -281,22 +290,22 @@ async def hint(ctx):
 # Adds user to an existing team
 @bot.command(help="Join a preexisting team", pass_context=True)
 async def jointeam(ctx, roleName=''):
-    if roleName == '':
+    if roleName == '': # Error checking
         await ctx.send("Please list a team name to join.")
         return
 
-    forbiddenRoles = lists["forbidden"]
-    if roleName in forbiddenRoles:
+    forbiddenRoles = LISTS["forbidden"]
+    if roleName in forbiddenRoles: # Error checking
         await ctx.send("Don't worry, we're smarter than that.")
         return
 
-    author = ctx.message.author # grabs the member id that used command
-    if any(role.name == roleName for role in author.roles):
+    author = ctx.message.author
+    if any(role.name == roleName for role in author.roles): # Error checking
         await ctx.send("You already have a team! Contact a Sticker Person.")
 
     else:
         roleToAdd = discord.utils.get(ctx.guild.roles, name=roleName)
-        if(roleToAdd == None):
+        if(roleToAdd == None): # Error checking
             await ctx.send("This is not a role!")
             
         else:
