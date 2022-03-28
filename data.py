@@ -2,10 +2,25 @@ import json
 from random import choice
 from time import time
 
+'==========================================================================================================================================='
+'Constants'
+
 jinfo = "./config/data.json"
 jteams = "./config/teams.json"
 jbase = "./config/baseteam.json"
 messages = json.load(open("./config/messages.json"))
+
+'==========================================================================================================================================='
+'String editors'
+
+def processString(teamName):
+    return str(teamName.encode('ascii', 'xmlcharrefreplace'))[2:-1]
+
+def deprocessString(teamName):
+    return "i should do something"
+
+'==========================================================================================================================================='
+'Accessors'
 
 def getData():
     return json.load(open(jinfo))
@@ -16,8 +31,7 @@ def getTeams():
 def getBase():
     return json.load(open(jbase))
 
-def processString(teamName):
-    return str(teamName.encode('ascii', 'xmlcharrefreplace'))[2:-1]
+'==========================================================================================================================================='
 
 def printTeams():
     teams = getTeams()
@@ -25,6 +39,8 @@ def printTeams():
     for team in teams:
         s += str(team) + "\n"
     return s
+
+
 
 def resetTeams():
     teams = getTeams()
