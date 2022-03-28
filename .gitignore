@@ -4,5 +4,8 @@ teams.json
 # User specific, contains sensitive info
 config/config.json
 
+# User specific, make the stickers how you like
+config/data.json
+
 # Bot cache, user specific
 __pycache__/
