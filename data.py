@@ -38,6 +38,13 @@ def printTeams():
         s += str(team) + "\n"
     return s
 
+def printStickers():
+    stickers = getData()
+    s = '```'
+    for sticker in stickers:
+        s += sticker.ljust(15) + stickers[sticker]["points"] + " " + stickers[sticker]["hint"] + "\n"
+    return s + "```"
+
 '==========================================================================================================================================='
 'JSON Modifiers'
 
