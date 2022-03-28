@@ -79,12 +79,12 @@ async def on_raw_message_edit(msg):
 'Bot Debug Commands'
 
 # Checking Bot Ping
-@bot.command(name='ping', help="Gives bot's ping.",pass_context=True)
+@bot.command(pass_context=True)
 async def ping(ctx):
     await ctx.send('Welcome Bots Latency: {0}'.format(round(bot.latency, 2)))
 
 # Checks if Responsive
-@bot.command(name='status', help="Gives bot's status.",pass_context=True)
+@bot.command(pass_context=True)
 async def status(ctx):
     await ctx.send(MESSAGES["statusMessage"])
 
@@ -92,7 +92,7 @@ async def status(ctx):
 'Moderation Commands'
 
 # Mod Help
-@bot.command(name="modhelp")
+@bot.command(pass_context=True)
 async def modhelp(ctx):
     if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles: # Ensures that user has proper permissions
         await ctx.send(MESSAGES["noAccess"])
@@ -101,7 +101,7 @@ async def modhelp(ctx):
     await ctx.channel.send(MESSAGES["modHelpMessage"])
 
 # Creating A Private Text Channel 
-@bot.command(name='createchannel', help="Creates the private team channel")
+@bot.command(pass_context=True)
 @commands.has_permissions(manage_channels=True, manage_roles=True)
 async def createchannel(ctx, *, ChannelName_Role=''):
     if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles: # Ensures that user has proper permissions
@@ -126,7 +126,7 @@ async def createchannel(ctx, *, ChannelName_Role=''):
     await guild.create_text_channel(ChannelName_Role, overwrites=overwrites)
 
 # Giving a member a role!
-@bot.command(name='giverole', help="Gives a member a specific role/assigns team", pass_context=True)
+@bot.command(pass_context=True)
 async def giverole(ctx, user, *, role):
     if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles: # Ensures that user has proper permissions
         await ctx.send(MESSAGES["noAccess"])
@@ -142,7 +142,7 @@ async def giverole(ctx, user, *, role):
         await ctx.send("This role does not exist.")
 
 # File dump and exit
-@bot.command(help="Makes it die and dumps all its files.", pass_context=True)
+@bot.command(pass_context=True)
 async def keepinventory(ctx):
     if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles: # Ensures that user has proper permissions
         await ctx.send(MESSAGES["noAccess"])
@@ -155,7 +155,7 @@ async def keepinventory(ctx):
     exit("All done!")
 
 # Exit without file dump
-@bot.command(help="Makes it die.", pass_context=True)
+@bot.command(pass_context=True)
 async def kill(ctx):
     if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles: # Ensures that user has proper permissions
         await ctx.send(MESSAGES["noAccess"])
@@ -164,7 +164,7 @@ async def kill(ctx):
     exit("All done!")
 
 # Delete a team
-@bot.command(help="Removes a team from the server and database", pass_context=True)
+@bot.command(pass_context=True)
 async def removeteam(ctx, *, team=''):
     if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles: # Ensures that user has proper permissions
         await ctx.send(MESSAGES["noAccess"])
@@ -181,7 +181,7 @@ async def removeteam(ctx, *, team=''):
         await role.delete() # Removes the team role
 
 # Scoreboard Generation
-@bot.command(help="Formats the scoreboard with the most up to date information", pass_context=True)
+@bot.command(pass_context=True)
 async def scoreboard(ctx):
     if ctx.message.channel.id not in CONFIG["scoreboard"]: # Error checking
         await ctx.send("Looks like this isn't the right channel for that, try again in the correct location!")
@@ -192,8 +192,17 @@ async def scoreboard(ctx):
     embedded = discord.Embed(title = "LeaderBoard", description=scores, color = 0xF1C40F)
     await ctx.send(embed=embedded)
 
+# Send the list of stickers
+@bot.command(pass_context=True)
+async def stickerlist(ctx):
+    if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles: # Ensures that user has proper permissions
+        await ctx.send(MESSAGES["noAccess"])
+    
+    else:
+        await ctx.send(data.printStickers())
+
 # Send the list of teams
-@bot.command(help="View the full list of teams", pass_context=True)
+@bot.command(pass_context=True)
 async def teamlist(ctx):
     if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles: # Ensures that user has proper permissions
         await ctx.send(MESSAGES["noAccess"])
@@ -202,10 +211,68 @@ async def teamlist(ctx):
         await ctx.send(data.printTeams())
 
 '==========================================================================================================================================='
+'Data Editing Commands'
+
+# Adds a sticker to the database
+@bot.command(pass_context=True)
+async def addsticker(ctx, name='', code='', points='', *, hint=''):
+    if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles: # Ensures that user has proper permissions
+        await ctx.send(MESSAGES["noAccess"])
+    
+    elif '' in [name, code, points, hint] or not points.isdigit(): # Error checking
+        await ctx.send("Invalid input, make sure your input is in format `!addsticker <sticker> <authCode> <points> <hint>")
+        return
+    
+    else:
+        await ctx.send(data.addStickerToDatabase(name.upper()+code, points, hint))
+
+# Removes a sticker from the database
+@bot.command(pass_context=True)
+async def removesticker(ctx, name='', code=''):
+    if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles: # Ensures that user has proper permissions
+        await ctx.send(MESSAGES["noAccess"])
+    
+    elif '' in [name, code]: # Error checking
+        await ctx.send("Invalid input, make sure your input is in format `!removesticker <sticker> <authCode>")
+        return
+    
+    else:
+        await ctx.send(data.removeStickerFromDatabase(name.upper()+code))
+
+# Changes a sticker's name
+@bot.command(pass_context=True)
+async def changestickername(ctx, name='', code='', newname='', newcode =''):
+    if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles: # Ensures that user has proper permissions
+        await ctx.send(MESSAGES["noAccess"])
+    
+    elif '' in [name, code, newname, newcode]: # Error checking
+        await ctx.send("Invalid input, make sure your input is in format `!removesticker <sticker> <authCode>")
+        return
+
+    elif name.upper()+code == newname.upper()+newcode:
+        await ctx.send("You have entered the same name, please try again.")
+
+    else:
+        await ctx.send(data.updateStickerName(name.upper()+code, newname.upper()+newcode))
+
+# Updates a sticker's hint
+@bot.command(pass_context=True)
+async def changestickerhint(ctx, name='', code='', *, hint=''):
+    if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles: # Ensures that user has proper permissions
+        await ctx.send(MESSAGES["noAccess"])
+    
+    elif '' in [name, code, hint]: # Error checking
+        await ctx.send("Invalid input, make sure your input is in format `!removesticker <sticker> <authCode>")
+        return
+
+    else:
+        await ctx.send(data.updateHint(name.upper()+code, hint))
+
+'==========================================================================================================================================='
 'Standard User Commands'
 
 # Sticker code input
-@bot.command(help="Submit a code you have found: <name> <key>", pass_context=True)
+@bot.command(pass_context=True)
 async def code(ctx, codeword='', key=''):
     team = ctx.message.channel
 
@@ -214,13 +281,13 @@ async def code(ctx, codeword='', key=''):
         return
 
     if codeword == '' or key == '': # Error checking
-        await ctx.send("Invalid input, make sure you input is in format `!code <sticker> <authCode>")
+        await ctx.send("Invalid input, make sure your input is in format `!code <sticker> <authCode>")
         return
 
     await ctx.send(data.addSticker(ctx.channel.name, codeword, key))
 
 # Creates a new team and adds the founding member 
-@bot.command(help="Create a new team!", pass_context=True)
+@bot.command(pass_context=True)
 async def createteam(ctx,*,role_name=''):
     if role_name == '': # Error checking
         await ctx.send("Please list a team name to create.")
@@ -272,12 +339,12 @@ async def createteam(ctx,*,role_name=''):
         await ctx.send(f"This team/role already exists try another name!")
 
 # Help function
-@bot.command(help="No longer the worse help function", pass_context=True)
+@bot.command(pass_context=True)
 async def help(ctx):
     await ctx.send(MESSAGES["helpMessage"])
 
 # Outputs hints
-@bot.command(help='Request a hint, as well as viewing your current hints.',pass_context=True)
+@bot.command(pass_context=True)
 async def hint(ctx):
     team = ctx.message.channel
 
@@ -288,7 +355,7 @@ async def hint(ctx):
     await ctx.send(data.getHint(team.name))
 
 # Adds user to an existing team
-@bot.command(help="Join a preexisting team", pass_context=True)
+@bot.command(pass_context=True)
 async def jointeam(ctx, roleName=''):
     if roleName == '': # Error checking
         await ctx.send("Please list a team name to join.")
@@ -313,7 +380,7 @@ async def jointeam(ctx, roleName=''):
             await ctx.send("Role has been added!")
 
 # Outputs score
-@bot.command(help="Displays your team's score", pass_context=True)
+@bot.command(pass_context=True)
 async def score(ctx):
     await ctx.send(data.printScoreAndCount(ctx.message.channel.name))
 
