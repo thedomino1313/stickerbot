@@ -246,7 +246,7 @@ async def changestickername(ctx, name='', code='', newname='', newcode =''):
         await ctx.send(MESSAGES["noAccess"])
     
     elif '' in [name, code, newname, newcode]: # Error checking
-        await ctx.send("Invalid input, make sure your input is in format `!removesticker <sticker> <authCode>")
+        await ctx.send("Invalid input, make sure your input is in format `!changestickername <sticker> <authCode> <new sticker> <new authCode>")
         return
 
     elif name.upper()+code == newname.upper()+newcode:
@@ -262,11 +262,44 @@ async def changestickerhint(ctx, name='', code='', *, hint=''):
         await ctx.send(MESSAGES["noAccess"])
     
     elif '' in [name, code, hint]: # Error checking
-        await ctx.send("Invalid input, make sure your input is in format `!removesticker <sticker> <authCode>")
+        await ctx.send("Invalid input, make sure your input is in format `!changestickerhint <sticker> <authCode> <hint>")
         return
 
     else:
         await ctx.send(data.updateHint(name.upper()+code, hint))
+
+# Updates a sticker's point value
+@bot.command(pass_context=True)
+async def changestickerpoints(ctx, name='', code='', points=''):
+    if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles: # Ensures that user has proper permissions
+        await ctx.send(MESSAGES["noAccess"])
+    
+    elif '' in [name, code, hint] or not points.isdigit(): # Error checking
+        await ctx.send("Invalid input, make sure your input is in format `!changestickerpoints <sticker> <authCode> <points>")
+        return
+
+    else:
+        await ctx.send(data.updatePoints(name.upper()+code, points))
+
+# Changes a team's name
+@bot.command(pass_context=True)
+async def changeteamname(ctx, name='', newname=''):
+    while "  " in newname: # Removes excess spaces
+        newname = newname.replace("  ", " ")
+    
+    if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles: # Ensures that user has proper permissions
+        await ctx.send(MESSAGES["noAccess"])
+    
+    elif '' in [name, newname]: # Error checking
+        await ctx.send("Invalid input, make sure your input is in format `!changeteamname <team> <new team>")
+        return
+
+    elif name.lower() == newname.lower():
+        await ctx.send("You have entered the same name, please try again.")
+
+    else:
+        await ctx.send(data.updateStickerName(name.lower()+code, newname.lower()))
+
 
 '==========================================================================================================================================='
 'Standard User Commands'
@@ -294,8 +327,9 @@ async def createteam(ctx,*,role_name=''):
         return
     
     while "  " in role_name: # Removes excess spaces
-        role_name = role_name.replace("  ", " ")
-    
+        role_name = role_name.replace("  ", " ")\
+
+    role_name = role_name.lower()
     
     author = ctx.author 
     guild = ctx.guild
