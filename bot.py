@@ -249,7 +249,7 @@ async def changestickername(ctx, name='', code='', newname='', newcode =''):
         await ctx.send("Invalid input, make sure your input is in format `!changestickername <sticker> <authCode> <new sticker> <new authCode>")
         return
 
-    elif name.upper()+code == newname.upper()+newcode:
+    elif name.upper()+code == newname.upper()+newcode: # Error checking
         await ctx.send("You have entered the same name, please try again.")
 
     else:
@@ -294,12 +294,11 @@ async def changeteamname(ctx, name='', newname=''):
         await ctx.send("Invalid input, make sure your input is in format `!changeteamname <team> <new team>")
         return
 
-    elif name.lower() == newname.lower():
+    elif name.lower() == newname.lower(): # Error checking
         await ctx.send("You have entered the same name, please try again.")
 
     else:
-        await ctx.send(data.updateStickerName(name.lower()+code, newname.lower()))
-
+        await ctx.send(data.updateTeamName(name.lower(), newname.lower()))
 
 '==========================================================================================================================================='
 'Standard User Commands'
