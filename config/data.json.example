@@ -1,0 +1,7 @@
+{
+    "STICKER12345": {
+        "README": "Please copy this file and change the name to data.json, as well as fill out the info below. (Using the provided commands, or manually.)",
+        "points": "1",
+        "hint": "Its over there"
+    }
+}
