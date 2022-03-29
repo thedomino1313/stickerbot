@@ -1,5 +1,6 @@
 # bot.py
 
+from binascii import rlecode_hqx
 import json
 
 from os.path import exists
@@ -283,10 +284,13 @@ async def changestickerpoints(ctx, name='', code='', points=''):
 
 # Changes a team's name
 @bot.command(pass_context=True)
-async def changeteamname(ctx, name='', newname=''):
+async def changeteamname(ctx, name='', *, newname=''):
     while "  " in newname: # Removes excess spaces
         newname = newname.replace("  ", " ")
     
+    name = name.lower()
+    newname = newname.replace(" ", "-").lower()
+
     if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles: # Ensures that user has proper permissions
         await ctx.send(MESSAGES["noAccess"])
     
@@ -294,11 +298,18 @@ async def changeteamname(ctx, name='', newname=''):
         await ctx.send("Invalid input, make sure your input is in format `!changeteamname <team> <new team>")
         return
 
-    elif name.lower() == newname.lower(): # Error checking
+    elif name == newname: # Error checking
         await ctx.send("You have entered the same name, please try again.")
 
     else:
-        await ctx.send(data.updateTeamName(name.lower(), newname.lower()))
+        results = data.updateTeamName(name, newname)
+        if results == "Team name updated.":
+            guild = ctx.guild
+            role = discord.utils.get(guild.roles, name=name)
+            channel = discord.utils.get(guild.channels, name=name)
+            await role.edit(name=newname)
+            await channel.edit(name=newname)
+        await ctx.send(results)
 
 '==========================================================================================================================================='
 'Standard User Commands'
@@ -328,7 +339,7 @@ async def createteam(ctx,*,role_name=''):
     while "  " in role_name: # Removes excess spaces
         role_name = role_name.replace("  ", " ")\
 
-    role_name = role_name.lower()
+    role_name = role_name.replace(" ", "-").lower()
     
     author = ctx.author 
     guild = ctx.guild
