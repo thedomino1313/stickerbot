@@ -174,12 +174,16 @@ async def removeteam(ctx, *, team=''):
         await ctx.send("Please list a team name to remove.")
     
     else:
-        team = team.lower()
-        await ctx.send(data.removeTeam(team)) # Removes the team from the json
-        channel = discord.utils.get(ctx.guild.channels, name=team.replace(" ", "-"))
-        await channel.delete() # Removes the team channel
-        role = discord.utils.get(ctx.guild.roles, name=team)
-        await role.delete() # Removes the team role
+        while "  " in team: # Removes excess spaces
+            team = team.replace("  ", " ")
+        team = team.replace(" ", "-").lower() # Converts to channel friendly format
+        results = data.removeTeam(team)
+        if results == "Team removed!": # Ensures that the team exists in the database
+            channel = discord.utils.get(ctx.guild.channels, name=team)
+            await channel.delete() # Removes the team channel
+            role = discord.utils.get(ctx.guild.roles, name=team)
+            await role.delete() # Removes the team role
+        await ctx.send(results)
 
 # Scoreboard Generation
 @bot.command(pass_context=True)
@@ -289,7 +293,7 @@ async def changeteamname(ctx, name='', *, newname=''):
         newname = newname.replace("  ", " ")
     
     name = name.lower()
-    newname = newname.replace(" ", "-").lower()
+    newname = newname.replace(" ", "-").lower() # Converts to channel friendly format
 
     if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles: # Ensures that user has proper permissions
         await ctx.send(MESSAGES["noAccess"])
@@ -337,9 +341,9 @@ async def createteam(ctx,*,role_name=''):
         return
     
     while "  " in role_name: # Removes excess spaces
-        role_name = role_name.replace("  ", " ")\
+        role_name = role_name.replace("  ", " ")
 
-    role_name = role_name.replace(" ", "-").lower()
+    role_name = role_name.replace(" ", "-").lower() # Converts to channel friendly format
     
     author = ctx.author 
     guild = ctx.guild
