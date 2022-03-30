@@ -1,10 +1,8 @@
 # bot.py
 
-from binascii import rlecode_hqx
 import json
 
 from os.path import exists
-from tabnanny import check
 
 import discord
 from discord.ext import commands    # gets the bot commands archive
@@ -180,6 +178,8 @@ async def removeteam(ctx, *, team=''):
     else:
         while "  " in team: # Removes excess spaces
             team = team.replace("  ", " ")
+        while "--" in team: # Removes excess dashes
+            team = team.replace("--", "-")
         team = team.replace(" ", "-").lower() # Converts to channel friendly format
         results = data.removeTeam(team)
         if results == "Team removed!": # Ensures that the team exists in the database
@@ -296,6 +296,9 @@ async def changeteamname(ctx, name='', *, newname=''):
     while "  " in newname: # Removes excess spaces
         newname = newname.replace("  ", " ")
     
+    while "--" in newname: # Removes excess dashes
+        newname = newname.replace("--", "-")
+
     name = name.lower()
     newname = newname.replace(" ", "-").lower() # Converts to channel friendly format
 
@@ -350,6 +353,9 @@ async def createteam(ctx,*,role_name=''):
 
     while "  " in role_name: # Removes excess spaces
         role_name = role_name.replace("  ", " ")
+
+    while "--" in role_name: # Removes excess dashes
+        role_name = role_name.replace("--", "-")
 
     role_name = role_name.replace(" ", "-").lower() # Converts to channel friendly format
     
