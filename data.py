@@ -16,8 +16,22 @@ messages = json.load(open("./config/messages.json"))
 def processString(teamName):
     return str(teamName.encode('ascii', 'xmlcharrefreplace'))[2:-1]
 
-def deprocessString(teamName):
-    return "i should do something"
+def revertString(teamName):
+    teamNameList = list(teamName)
+    reverted = []
+    for i in range(len(teamNameList) - 1):
+        if teamNameList[i] == "&" and teamNameList[i + 1] == "#":
+            for j in range(i, len(teamNameList)):
+                if teamNameList[j] == ";":
+                    reverted.append(chr(int(''.join(teamNameList[ i + 2 : j ]))))
+                    teamNameList[i : j + 1] = ['' for i in range(i, j + 1)]
+                    i = j + 1
+                    break
+        else:
+            reverted.append(teamNameList[i])
+
+    reverted.append(teamNameList[-1])
+    return ''.join(reverted)
 
 '==========================================================================================================================================='
 'Accessors'
