@@ -13,10 +13,10 @@ messages = json.load(open("./config/messages.json"))
 '==========================================================================================================================================='
 'String editors'
 
-def processString(teamName):
+def processString(teamName): # Converts unicode characters to a json friendly format
     return str(teamName.encode('ascii', 'xmlcharrefreplace'))[2:-1]
 
-def revertString(teamName):
+def revertString(teamName): # Reverts json friendly format to unicode characters
     teamNameList = list(teamName)
     reverted = []
     for i in range(len(teamNameList) - 1):
@@ -32,6 +32,16 @@ def revertString(teamName):
 
     reverted.append(teamNameList[-1])
     return ''.join(reverted)
+
+
+def replaceEmojis(word): # Converts unicode emojis to an empty box for scoreboard printing
+    s = ''
+    for char in word:
+        if char.isascii():
+            s += char
+        else:
+            s += '□'
+    return s
 
 '==========================================================================================================================================='
 'Accessors'
@@ -49,7 +59,7 @@ def printTeams():
     teams = getTeams()
     s = ''
     for team in teams:
-        s += str(team) + "\n"
+        s += str(revertString(team)) + "\n"
     return s
 
 def printStickers():
@@ -273,10 +283,11 @@ def scoreBoard():
     maxLen = 0
 
     for team in teams: # Finds the longest team name, and adds their score and counts to a dictionary
+        team = revertString(team)
         if len(team) > maxLen:
             maxLen = len(team)
 
-        scoreDict[team] = getScore(team), getCount(team)
+        scoreDict[replaceEmojis(team)] = getScore(team), getCount(team)
 
     order = (sorted(scoreDict.items(), key = lambda x:x[1], reverse=True)) # Sorts the teams by score
 

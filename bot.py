@@ -112,6 +112,10 @@ async def createchannel(ctx, *, ChannelName_Role=''):
     if ChannelName_Role == '': # Error checking
         await ctx.send("Please list a channel name to create.")
     
+    if "#" in ChannelName_Role:
+        await ctx.send("No hashtags allowed in team names >:(")
+        return
+
     guild = ctx.guild
     role = ChannelName_Role
     authorize_role = await guild.create_role(name=role)
@@ -340,6 +344,10 @@ async def createteam(ctx,*,role_name=''):
         await ctx.send("Please list a team name to create.")
         return
     
+    if "#" in role_name:
+        await ctx.send("No hashtags allowed in team names >:(")
+        return
+
     while "  " in role_name: # Removes excess spaces
         role_name = role_name.replace("  ", " ")
 
