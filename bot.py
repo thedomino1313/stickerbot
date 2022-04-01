@@ -93,7 +93,7 @@ async def status(ctx):
 # Mod Help
 @bot.command(pass_context=True)
 async def modhelp(ctx):
-    if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles: # Ensures that user has proper permissions
+    if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles and ctx.message.author.id not in CONFIG["admins"]: # Ensures that user has proper permissions
         await ctx.send(MESSAGES["noAccess"])
         return
     
@@ -103,7 +103,7 @@ async def modhelp(ctx):
 @bot.command(pass_context=True)
 @commands.has_permissions(manage_channels=True, manage_roles=True)
 async def createchannel(ctx, *, ChannelName_Role=''):
-    if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles: # Ensures that user has proper permissions
+    if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles and ctx.message.author.id not in CONFIG["admins"]: # Ensures that user has proper permissions
         await ctx.send(MESSAGES["noAccess"])
         return
     
@@ -131,7 +131,7 @@ async def createchannel(ctx, *, ChannelName_Role=''):
 # Giving a member a role!
 @bot.command(pass_context=True)
 async def giverole(ctx, user, *, role):
-    if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles: # Ensures that user has proper permissions
+    if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles and ctx.message.author.id not in CONFIG["admins"]: # Ensures that user has proper permissions
         await ctx.send(MESSAGES["noAccess"])
         return
     
@@ -147,7 +147,7 @@ async def giverole(ctx, user, *, role):
 # File dump and exit
 @bot.command(pass_context=True)
 async def keepinventory(ctx):
-    if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles: # Ensures that user has proper permissions
+    if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles and ctx.message.author.id not in CONFIG["admins"]: # Ensures that user has proper permissions
         await ctx.send(MESSAGES["noAccess"])
         return
     
@@ -160,7 +160,7 @@ async def keepinventory(ctx):
 # Exit without file dump
 @bot.command(pass_context=True)
 async def kill(ctx):
-    if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles: # Ensures that user has proper permissions
+    if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles and ctx.message.author.id not in CONFIG["admins"]: # Ensures that user has proper permissions
         await ctx.send(MESSAGES["noAccess"])
         return
     await ctx.send("Goodbye for now. <3")
@@ -169,7 +169,7 @@ async def kill(ctx):
 # Delete a team
 @bot.command(pass_context=True)
 async def removeteam(ctx, *, team=''):
-    if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles: # Ensures that user has proper permissions
+    if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles and ctx.message.author.id not in CONFIG["admins"]: # Ensures that user has proper permissions
         await ctx.send(MESSAGES["noAccess"])
     
     elif team == '': # Error Checking
@@ -204,7 +204,7 @@ async def scoreboard(ctx):
 # Send the list of stickers
 @bot.command(pass_context=True)
 async def stickerlist(ctx):
-    if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles: # Ensures that user has proper permissions
+    if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles and ctx.message.author.id not in CONFIG["admins"]: # Ensures that user has proper permissions
         await ctx.send(MESSAGES["noAccess"])
     
     else:
@@ -213,7 +213,7 @@ async def stickerlist(ctx):
 # Send the list of teams
 @bot.command(pass_context=True)
 async def teamlist(ctx):
-    if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles: # Ensures that user has proper permissions
+    if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles and ctx.message.author.id not in CONFIG["admins"]: # Ensures that user has proper permissions
         await ctx.send(MESSAGES["noAccess"])
     
     else:
@@ -225,7 +225,7 @@ async def teamlist(ctx):
 # Adds a sticker to the database
 @bot.command(pass_context=True)
 async def addsticker(ctx, name='', code='', points='', *, hint=''):
-    if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles: # Ensures that user has proper permissions
+    if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles and ctx.message.author.id not in CONFIG["admins"]: # Ensures that user has proper permissions
         await ctx.send(MESSAGES["noAccess"])
     
     elif '' in [name, code, points, hint] or not points.isdigit(): # Error checking
@@ -238,7 +238,7 @@ async def addsticker(ctx, name='', code='', points='', *, hint=''):
 # Removes a sticker from the database
 @bot.command(pass_context=True)
 async def removesticker(ctx, name='', code=''):
-    if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles: # Ensures that user has proper permissions
+    if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles and ctx.message.author.id not in CONFIG["admins"]: # Ensures that user has proper permissions
         await ctx.send(MESSAGES["noAccess"])
     
     elif '' in [name, code]: # Error checking
@@ -251,7 +251,7 @@ async def removesticker(ctx, name='', code=''):
 # Changes a sticker's name
 @bot.command(pass_context=True)
 async def changestickername(ctx, name='', code='', newname='', newcode =''):
-    if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles: # Ensures that user has proper permissions
+    if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles and ctx.message.author.id not in CONFIG["admins"]: # Ensures that user has proper permissions
         await ctx.send(MESSAGES["noAccess"])
     
     elif '' in [name, code, newname, newcode]: # Error checking
@@ -267,7 +267,7 @@ async def changestickername(ctx, name='', code='', newname='', newcode =''):
 # Updates a sticker's hint
 @bot.command(pass_context=True)
 async def changestickerhint(ctx, name='', code='', *, hint=''):
-    if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles: # Ensures that user has proper permissions
+    if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles and ctx.message.author.id not in CONFIG["admins"]: # Ensures that user has proper permissions
         await ctx.send(MESSAGES["noAccess"])
     
     elif '' in [name, code, hint]: # Error checking
@@ -280,7 +280,7 @@ async def changestickerhint(ctx, name='', code='', *, hint=''):
 # Updates a sticker's point value
 @bot.command(pass_context=True)
 async def changestickerpoints(ctx, name='', code='', points=''):
-    if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles: # Ensures that user has proper permissions
+    if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles and ctx.message.author.id not in CONFIG["admins"]: # Ensures that user has proper permissions
         await ctx.send(MESSAGES["noAccess"])
     
     elif '' in [name, code, hint] or not points.isdigit(): # Error checking
@@ -302,7 +302,7 @@ async def changeteamname(ctx, name='', *, newname=''):
     name = name.lower()
     newname = newname.replace(" ", "-").lower() # Converts to channel friendly format
 
-    if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles: # Ensures that user has proper permissions
+    if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles and ctx.message.author.id not in CONFIG["admins"]: # Ensures that user has proper permissions
         await ctx.send(MESSAGES["noAccess"])
     
     elif '' in [name, newname]: # Error checking
