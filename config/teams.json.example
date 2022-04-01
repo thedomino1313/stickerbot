@@ -7,6 +7,8 @@
         "score": 0,
         "count": 0,
         "ghintcomplete": false,
-        "lastnewhint": 0
+        "lastnewhint": 0,
+        "welcome_embed": 0,
+        "team_channel": 0
     }
 }
