@@ -311,8 +311,17 @@ async def changeteamname(ctx, name='', *, newname=''):
             guild = ctx.guild
             role = discord.utils.get(guild.roles, name=name)
             channel = discord.utils.get(guild.channels, name=name)
+            descript = (MESSAGES["newTeamMessage"]) # Creating the embed message
+            embedmessage=discord.Embed(title=f"Welcome to the {newname}'s Teams DM", description=descript, color=0x5bcdee)
+            embedmessage.set_footer(text="Good Luck!")
+            welcome_embed_id = data.getTeams()[data.processString(newname)]["welcome_embed"]
+            team_channel_id = data.getTeams()[data.processString(newname)]["team_channel"]
+            channel = await bot.fetch_channel(team_channel_id)
+            message = await channel.fetch_message(welcome_embed_id)
+            await message.edit(embed=embedmessage)
             await role.edit(name=newname)
             await channel.edit(name=newname)
+            # data.getTeams()[newname]["message_id"]
         await ctx.send(results)
 
 '==========================================================================================================================================='
@@ -375,12 +384,21 @@ async def createteam(ctx,*,role_name=''):
         descript = (MESSAGES["newTeamMessage"]) # Creating the embed message
         embedmessage=discord.Embed(title=f"Welcome to the {role_name}'s Teams DM", description=descript, color=0x5bcdee)
         embedmessage.set_footer(text="Good Luck!")
-        
-        await newChan.send(embed=embedmessage)  # Sends DM to channel
 
+        # edit this embed when changing team name
+        
+        welcome = await newChan.send(embed=embedmessage)  # Sends DM to channel 
+         # message id
+        # await welcome.edit
+        
         data.addTeam(role_name)
 
         team_channel_id = newChan.id
+        new_data = data.getTeams()
+        new_data[data.processString(role_name)]["welcome_embed"] = welcome.id
+        new_data[data.processString(role_name)]["team_channel"] = team_channel_id
+        data.jdump("./config/teams.json", new_data)
+        
         await ctx.send("Your shiny new team awaits you! <#{}>".format(team_channel_id))
         
     else: # Error checking

@@ -1,6 +1,7 @@
 import json
 from random import choice
 from time import time
+import discord
 
 '==========================================================================================================================================='
 'Constants'
@@ -58,6 +59,9 @@ def printStickers():
     for sticker in stickers:
         s += sticker.ljust(15) + stickers[sticker]["points"] + " " + stickers[sticker]["hint"] + "\n"
     return s + "```"
+
+# def getNumNames(teamName):
+#     return getTeams()[teamName]["name_changes"]
 
 '==========================================================================================================================================='
 'JSON Modifiers'
@@ -296,3 +300,5 @@ def scoreBoard():
 
     s += ("╚" + "═"*(maxLen +2) + "╩" + "═"*(8) +"╩" + "═"*(8) + "╝" + "\n") # Bottom border
     return s
+
+getTeams()
