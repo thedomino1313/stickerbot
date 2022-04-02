@@ -1,0 +1,9 @@
+{
+    "README": "Please copy this file and rename it to locations.json, as well as delete this example location and add your own.",
+    "Building": {
+        "1": {},
+        "2": {
+            "sticker": "location"
+        }
+    }
+}

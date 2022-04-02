@@ -331,6 +331,54 @@ async def changeteamname(ctx, name='', *, newname=''):
             # data.getTeams()[newname]["message_id"]
         await ctx.send(results)
 
+@bot.command(pass_context=True)
+async def addlocation(ctx, building='', floors=''):
+    if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles and ctx.message.author.id not in CONFIG["admins"]: # Ensures that user has proper permissions
+        await ctx.send(MESSAGES["noAccess"])
+    
+    elif '' in [building, floors] or not floors.isdigit(): # Error checking
+        await ctx.send("Invalid input, make sure your input is in format `!addlocation <building> <floors>")
+        return
+    
+    else:
+        await ctx.send(data.addLocationToDatabase(building.upper(), floors))
+
+@bot.command(pass_context=True)
+async def addstickertolocation(ctx, building='', floor='', name='', code='', *, location=''):
+    if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles and ctx.message.author.id not in CONFIG["admins"]: # Ensures that user has proper permissions
+        await ctx.send(MESSAGES["noAccess"])
+    
+    elif '' in [building, floor, name, code, location] or not floor.isdigit(): # Error checking
+        await ctx.send("Invalid input, make sure your input is in format `!addstickertolocation <building> <floor> <name> <code> <location>")
+        return
+    
+    else:
+        await ctx.send(data.addStickerToLocation(building.upper(), floor, name.upper()+code, location))
+
+@bot.command(pass_context=True)
+async def removestickerfromlocation(ctx, building='', floor='', name='', code=''):
+    if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles and ctx.message.author.id not in CONFIG["admins"]: # Ensures that user has proper permissions
+        await ctx.send(MESSAGES["noAccess"])
+    
+    elif '' in [building, floor, name, code] or not floor.isdigit() or not code.isdigit(): # Error checking
+        await ctx.send("Invalid input, make sure your input is in format `!addstickertolocation <building> <floor> <name> <code> <location>")
+        return
+    
+    else:
+        await ctx.send(data.removeStickerFromLocation(building.upper(), floor, name.upper()+code))
+
+@bot.command(pass_context=True)
+async def showlocations(ctx, team=""):
+    if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles and ctx.message.author.id not in CONFIG["admins"]: # Ensures that user has proper permissions
+        await ctx.send(MESSAGES["noAccess"])
+    
+    elif ctx.message.channel.id not in CONFIG["modchannels"]:
+        await ctx.send("No can do, that would show everyone every sticker location!")
+        return
+    
+    else:
+        await ctx.send(data.printLocations(team))
+
 '==========================================================================================================================================='
 'Standard User Commands'
 
