@@ -1,3 +1,5 @@
+from distutils.command.build import build
+from distutils.log import info
 import json
 from random import choice
 from time import time
@@ -9,6 +11,7 @@ import discord
 jinfo = "./config/data.json"
 jteams = "./config/teams.json"
 jbase = "./config/baseteam.json"
+jloc = "./config/locations.json"
 messages = json.load(open("./config/messages.json"))
 
 '==========================================================================================================================================='
@@ -55,6 +58,9 @@ def getTeams():
 
 def getBase():
     return json.load(open(jbase))
+
+def getLocations():
+    return json.load(open(jloc))
 
 def printTeams():
     teams = getTeams()
@@ -173,6 +179,68 @@ def addtoteam():
     for team in teams:
         teams[team]["ghintcomplete"] = False # This can change
     jdump(jteams, teams)
+
+# Adds a new location to the database
+def addLocationToDatabase(building, floors):
+    loc = getLocations()
+    if building not in loc: # Error checking
+        loc[building] = {} # Adds the location to the database
+        for i in range(int(floors)):
+            loc[building][i+1] = {}
+        jdump(jloc, loc)
+        return "Location added to database."
+    return "Location already exists."
+
+# Adds a sticker to a location
+def addStickerToLocation(building, floor, sticker, location):
+    loc = getLocations()
+    info = getData()
+    if building in loc:
+        if floor in loc[building]:
+            if sticker in info:
+                loc[building][floor][sticker] = location
+                jdump(jloc, loc)
+                return "Sticker added to location."
+            return "This sticker does not exist."
+        return "This floor does not exist."
+    return "This building does not exist."
+
+# Removes a sticker from a location
+def removeStickerFromLocation(building, floor, sticker):
+    loc = getLocations()
+    if building in loc:
+        if floor in loc[building]:
+            if sticker in loc[building][floor]:
+                loc[building][floor].pop(sticker)
+                jdump(jloc, loc)
+                return "Sticker removed from location."
+            return "This sticker does not exist."
+        return "This floor does not exist."
+    return "This building does not exist."
+
+def printLocations(team):
+    loc = getLocations()
+    teams = getTeams()
+    s = ''
+    if team != "" and team not in teams:
+        return "This team does not exist!"
+    for building in loc:
+        s += building + '\n'
+        for floor in loc[building]:
+            s += "\tFloor " + floor + ":\n"
+            if len(loc[building][floor]) == 0:
+                s += "\t\tNo stickers on this floor.\n"
+            for sticker in loc[building][floor]:
+                s += "\t\t"
+                if team != "":
+                    if sticker in teams[team]["stickers"]:
+                        s += "(1/1) "
+                    else:
+                        s += "(0/1) "
+                s += sticker + ": " + loc[building][floor][sticker] + "\n"
+    return s
+
+
 
 '==========================================================================================================================================='
 'Main Operations'
@@ -311,5 +379,3 @@ def scoreBoard():
 
     s += ("╚" + "═"*(maxLen +2) + "╩" + "═"*(8) +"╩" + "═"*(8) + "╝" + "\n") # Bottom border
     return s
-
-getTeams()

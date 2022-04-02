@@ -4,5 +4,6 @@
     "guild": "Guild Name Goes Here",
     "backup": "backupChannelId (int, not a string)",
     "scoreboard": ["list of valid scoreboard channels (ints, not strings)"],
-    "admins": [list of user ids with permanent mod perms]
+    "admins": [list of user ids with permanent mod perms],
+    "modchannels": [list of moderator channel ids]
 }
