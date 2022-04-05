@@ -1,9 +1,6 @@
-from distutils.command.build import build
-from distutils.log import info
 import json
 from random import choice
 from time import time
-import discord
 
 '==========================================================================================================================================='
 'Constants'

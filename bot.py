@@ -219,6 +219,36 @@ async def teamlist(ctx):
     else:
         await ctx.send(data.printTeams())
 
+# Outputs all locations
+@bot.command(pass_context=True)
+async def showlocations(ctx, team=""):
+    if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles and ctx.message.author.id not in CONFIG["admins"]: # Ensures that user has proper permissions
+        await ctx.send(MESSAGES["noAccess"])
+    
+    elif ctx.message.channel.id not in CONFIG["modchannels"]:
+        await ctx.send("No can do, that would show everyone every sticker location!")
+        return
+    
+    else:
+        await ctx.send(data.printLocations(team))
+
+# Outputs a team's info
+@bot.command(pass_context=True)
+async def teamprogress(ctx, team=""):
+    if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles and ctx.message.author.id not in CONFIG["admins"]: # Ensures that user has proper permissions
+        await ctx.send(MESSAGES["noAccess"])
+    
+    if team == '':
+        await ctx.send("Invalid input, make sure your input is in format `!teaminfo <team>`")
+        return
+
+    elif ctx.message.channel.id not in CONFIG["modchannels"]:
+        await ctx.send("No can do, that would show everyone every sticker location!")
+        return
+    
+    else:
+        await ctx.send(data.teamprogress(team))
+
 '==========================================================================================================================================='
 'Data Editing Commands'
 
@@ -370,35 +400,6 @@ async def removestickerfromlocation(ctx, building='', floor='', name='', code=''
     else:
         await ctx.send(data.removeStickerFromLocation(building.upper(), floor, name.upper()+code))
 
-# Outputs all locations
-@bot.command(pass_context=True)
-async def showlocations(ctx, team=""):
-    if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles and ctx.message.author.id not in CONFIG["admins"]: # Ensures that user has proper permissions
-        await ctx.send(MESSAGES["noAccess"])
-    
-    elif ctx.message.channel.id not in CONFIG["modchannels"]:
-        await ctx.send("No can do, that would show everyone every sticker location!")
-        return
-    
-    else:
-        await ctx.send(data.printLocations(team))
-
-# Outputs a team's info
-@bot.command(pass_context=True)
-async def teamprogress(ctx, team=""):
-    if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles and ctx.message.author.id not in CONFIG["admins"]: # Ensures that user has proper permissions
-        await ctx.send(MESSAGES["noAccess"])
-    
-    if team == '':
-        await ctx.send("Invalid input, make sure your input is in format `!teaminfo <team>`")
-        return
-
-    elif ctx.message.channel.id not in CONFIG["modchannels"]:
-        await ctx.send("No can do, that would show everyone every sticker location!")
-        return
-    
-    else:
-        await ctx.send(data.teamprogress(team))
 
 '==========================================================================================================================================='
 'Standard User Commands'
