@@ -262,6 +262,7 @@ def teamprogress(team):
     s = ''
     s += "Team {} has found:\n{}/{} standard stickers\n{}/{} gold stickers".format(team, teamS, totalS, teamG, totalG)
     s += "\nSticker location report: \n{}".format(printLocations(team))
+    return s
     
 
 '==========================================================================================================================================='
