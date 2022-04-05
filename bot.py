@@ -331,6 +331,7 @@ async def changeteamname(ctx, name='', *, newname=''):
             # data.getTeams()[newname]["message_id"]
         await ctx.send(results)
 
+# Adds a location to the database
 @bot.command(pass_context=True)
 async def addlocation(ctx, building='', floors=''):
     if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles and ctx.message.author.id not in CONFIG["admins"]: # Ensures that user has proper permissions
@@ -343,6 +344,7 @@ async def addlocation(ctx, building='', floors=''):
     else:
         await ctx.send(data.addLocationToDatabase(building.upper(), floors))
 
+# Adds a sticker to a location
 @bot.command(pass_context=True)
 async def addstickertolocation(ctx, building='', floor='', name='', code='', *, location=''):
     if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles and ctx.message.author.id not in CONFIG["admins"]: # Ensures that user has proper permissions
@@ -355,6 +357,7 @@ async def addstickertolocation(ctx, building='', floor='', name='', code='', *, 
     else:
         await ctx.send(data.addStickerToLocation(building.upper(), floor, name.upper()+code, location))
 
+# Removes a sticker from a location
 @bot.command(pass_context=True)
 async def removestickerfromlocation(ctx, building='', floor='', name='', code=''):
     if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles and ctx.message.author.id not in CONFIG["admins"]: # Ensures that user has proper permissions
@@ -367,6 +370,7 @@ async def removestickerfromlocation(ctx, building='', floor='', name='', code=''
     else:
         await ctx.send(data.removeStickerFromLocation(building.upper(), floor, name.upper()+code))
 
+# Outputs all locations
 @bot.command(pass_context=True)
 async def showlocations(ctx, team=""):
     if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles and ctx.message.author.id not in CONFIG["admins"]: # Ensures that user has proper permissions
