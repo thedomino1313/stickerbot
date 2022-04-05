@@ -250,7 +250,7 @@ def teamprogress(team):
     if team not in teams:
         return "This team does not exist!"
     for sticker in info:
-        if info[sticker]["points"] == 1:
+        if info[sticker]["points"] == '1':
             totalS += 1
             if sticker in teams[team]:
                 teamS += 1
