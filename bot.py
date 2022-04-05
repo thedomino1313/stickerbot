@@ -229,7 +229,7 @@ async def addsticker(ctx, name='', code='', points='', *, hint=''):
         await ctx.send(MESSAGES["noAccess"])
     
     elif '' in [name, code, points, hint] or not points.isdigit(): # Error checking
-        await ctx.send("Invalid input, make sure your input is in format `!addsticker <sticker> <authCode> <points> <hint>")
+        await ctx.send("Invalid input, make sure your input is in format `!addsticker <sticker> <authCode> <points> <hint>`")
         return
     
     else:
@@ -242,7 +242,7 @@ async def removesticker(ctx, name='', code=''):
         await ctx.send(MESSAGES["noAccess"])
     
     elif '' in [name, code]: # Error checking
-        await ctx.send("Invalid input, make sure your input is in format `!removesticker <sticker> <authCode>")
+        await ctx.send("Invalid input, make sure your input is in format `!removesticker <sticker> <authCode>`")
         return
     
     else:
@@ -255,7 +255,7 @@ async def changestickername(ctx, name='', code='', newname='', newcode =''):
         await ctx.send(MESSAGES["noAccess"])
     
     elif '' in [name, code, newname, newcode]: # Error checking
-        await ctx.send("Invalid input, make sure your input is in format `!changestickername <sticker> <authCode> <new sticker> <new authCode>")
+        await ctx.send("Invalid input, make sure your input is in format `!changestickername <sticker> <authCode> <new sticker> <new authCode>`")
         return
 
     elif name.upper()+code == newname.upper()+newcode: # Error checking
@@ -271,7 +271,7 @@ async def changestickerhint(ctx, name='', code='', *, hint=''):
         await ctx.send(MESSAGES["noAccess"])
     
     elif '' in [name, code, hint]: # Error checking
-        await ctx.send("Invalid input, make sure your input is in format `!changestickerhint <sticker> <authCode> <hint>")
+        await ctx.send("Invalid input, make sure your input is in format `!changestickerhint <sticker> <authCode> <hint>`")
         return
 
     else:
@@ -284,7 +284,7 @@ async def changestickerpoints(ctx, name='', code='', points=''):
         await ctx.send(MESSAGES["noAccess"])
     
     elif '' in [name, code, hint] or not points.isdigit(): # Error checking
-        await ctx.send("Invalid input, make sure your input is in format `!changestickerpoints <sticker> <authCode> <points>")
+        await ctx.send("Invalid input, make sure your input is in format `!changestickerpoints <sticker> <authCode> <points>`")
         return
 
     else:
@@ -306,7 +306,7 @@ async def changeteamname(ctx, name='', *, newname=''):
         await ctx.send(MESSAGES["noAccess"])
     
     elif '' in [name, newname]: # Error checking
-        await ctx.send("Invalid input, make sure your input is in format `!changeteamname <team> <new team>")
+        await ctx.send("Invalid input, make sure your input is in format `!changeteamname <team> <new team>`")
         return
 
     elif name == newname: # Error checking
@@ -338,7 +338,7 @@ async def addlocation(ctx, building='', floors=''):
         await ctx.send(MESSAGES["noAccess"])
     
     elif '' in [building, floors] or not floors.isdigit(): # Error checking
-        await ctx.send("Invalid input, make sure your input is in format `!addlocation <building> <floors>")
+        await ctx.send("Invalid input, make sure your input is in format `!addlocation <building> <floors>`")
         return
     
     else:
@@ -351,7 +351,7 @@ async def addstickertolocation(ctx, building='', floor='', name='', code='', *, 
         await ctx.send(MESSAGES["noAccess"])
     
     elif '' in [building, floor, name, code, location] or not floor.isdigit(): # Error checking
-        await ctx.send("Invalid input, make sure your input is in format `!addstickertolocation <building> <floor> <name> <code> <location>")
+        await ctx.send("Invalid input, make sure your input is in format `!addstickertolocation <building> <floor> <name> <code> <location>`")
         return
     
     else:
@@ -364,7 +364,7 @@ async def removestickerfromlocation(ctx, building='', floor='', name='', code=''
         await ctx.send(MESSAGES["noAccess"])
     
     elif '' in [building, floor, name, code] or not floor.isdigit() or not code.isdigit(): # Error checking
-        await ctx.send("Invalid input, make sure your input is in format `!addstickertolocation <building> <floor> <name> <code> <location>")
+        await ctx.send("Invalid input, make sure your input is in format `!addstickertolocation <building> <floor> <name> <code> <location>`")
         return
     
     else:
@@ -383,6 +383,23 @@ async def showlocations(ctx, team=""):
     else:
         await ctx.send(data.printLocations(team))
 
+# Outputs a team's info
+@bot.command(pass_context=True)
+async def teamprogress(ctx, team=""):
+    if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles and ctx.message.author.id not in CONFIG["admins"]: # Ensures that user has proper permissions
+        await ctx.send(MESSAGES["noAccess"])
+    
+    if team == '':
+        await ctx.send("Invalid input, make sure your input is in format `!teaminfo <team>`")
+        return
+
+    elif ctx.message.channel.id not in CONFIG["modchannels"]:
+        await ctx.send("No can do, that would show everyone every sticker location!")
+        return
+    
+    else:
+        await ctx.send(data.teamprogress(team))
+
 '==========================================================================================================================================='
 'Standard User Commands'
 
@@ -396,7 +413,7 @@ async def code(ctx, codeword='', key=''):
         return
 
     if codeword == '' or key == '': # Error checking
-        await ctx.send("Invalid input, make sure your input is in format `!code <sticker> <authCode>")
+        await ctx.send("Invalid input, make sure your input is in format `!code <sticker> <authCode>`")
         return
 
     await ctx.send(data.addSticker(ctx.channel.name, codeword, key))

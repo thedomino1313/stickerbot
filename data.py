@@ -240,7 +240,29 @@ def printLocations(team):
                 s += sticker + ": " + loc[building][floor][sticker] + "\n"
     return s
 
+def teamprogress(team):
+    teams = getTeams()
+    info = getData()
+    totalS = 0
+    totalG = 0
+    teamS = 0
+    teamG = 0
+    if team not in teams:
+        return "This team does not exist!"
+    for sticker in info:
+        if info[sticker]["points"] == 1:
+            totalS += 1
+            if sticker in teams[team]:
+                teamS += 1
+        else:
+            totalG += 1
+            if sticker in teams[team]:
+                teamG += 1
 
+    s = ''
+    s += "Team {} has found:\n{}/{} standard stickers\n{}/{} gold stickers".format(team, teamS, totalS, teamG, totalG)
+    s += "\nSticker location report: \n{}".format(printLocations(team))
+    
 
 '==========================================================================================================================================='
 'Main Operations'
