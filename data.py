@@ -1,9 +1,6 @@
-from distutils.command.build import build
-from distutils.log import info
 import json
 from random import choice
 from time import time
-import discord
 
 '==========================================================================================================================================='
 'Constants'
@@ -250,7 +247,7 @@ def teamprogress(team):
     if team not in teams:
         return "This team does not exist!"
     for sticker in info:
-        if info[sticker]["points"] == 1:
+        if info[sticker]["points"] == '1':
             totalS += 1
             if sticker in teams[team]:
                 teamS += 1
@@ -262,6 +259,7 @@ def teamprogress(team):
     s = ''
     s += "Team {} has found:\n{}/{} standard stickers\n{}/{} gold stickers".format(team, teamS, totalS, teamG, totalG)
     s += "\nSticker location report: \n{}".format(printLocations(team))
+    return s
     
 
 '==========================================================================================================================================='
