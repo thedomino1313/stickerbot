@@ -267,7 +267,22 @@ async def addsticker(ctx, name='', code='', points='', *, hint=''):
         return
     
     else:
-        await ctx.send(data.addStickerToDatabase(name.upper()+code, points, hint))
+        await ctx.send(data.addStickerToDatabase(name.upper()+code.upper(), points, hint))
+
+@bot.command(pass_context=True)
+async def addstickers(ctx, *, stickers):
+    if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles and ctx.message.author.id not in CONFIG["admins"]: # Ensures that user has proper permissions
+        await ctx.send(MESSAGES["noAccess"])
+    stickers = stickers.split(",")
+    count = 1
+    for sticker in stickers:
+        sticker = sticker.strip().split()
+        if len(sticker) < 4 or not sticker[2].isdigit(): # Error checking
+            await ctx.send("Invalid input for input number {}, make sure your input is in format `!addsticker <sticker> <authCode> <points> <hint>`".format(count))
+            continue
+        output = data.addStickerToDatabase(sticker[0].upper()+sticker[1].upper(), sticker[2], " ".join(sticker[3:]))
+        await ctx.send(output[:7] + " {}".format(count) + output[7:])
+        count += 1
 
 # Removes a sticker from the database
 @bot.command(pass_context=True)
@@ -451,6 +466,7 @@ async def createteam(ctx,*,role_name=''):
         authorize_role  = await guild.create_role(name=role_name, colour=discord.Colour(0x0000FF))
 
         sPeople =  discord.utils.get(guild.roles, name="@Sticker People")
+        codePeople =  discord.utils.get(guild.roles, name="Leather Jacket Enthusiast and Helper")
 
         overwrites = {
             guild.default_role: discord.PermissionOverwrite(read_messages=False), # Those without the team role can't see the channel
@@ -466,6 +482,7 @@ async def createteam(ctx,*,role_name=''):
 
         await newChan.set_permissions(authorize_role, send_messages=True, read_messages = True) # May be redundant idk
         await newChan.set_permissions(sPeople, send_messages=True, read_messages = True) # May be redundant idk
+        await newChan.set_permissions(codePeople, send_messages=True, read_messages = True) # May be redundant idk
 
         await author.add_roles(authorize_role) # Adds the role to the user
 
