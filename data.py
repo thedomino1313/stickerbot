@@ -221,6 +221,8 @@ def printLocations(team):
     s = ''
     if team != "" and team not in teams:
         return "This team does not exist!"
+    if len(loc) == 0:
+        return "There are no locations yet."
     for building in loc:
         s += building + '\n'
         for floor in loc[building]:
