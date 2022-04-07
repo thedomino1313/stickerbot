@@ -215,6 +215,7 @@ def removeStickerFromLocation(building, floor, sticker):
         return "This floor does not exist."
     return "This building does not exist."
 
+# Prints all locations and their stickers
 def printLocations(team):
     loc = getLocations()
     teams = getTeams()
@@ -239,6 +240,7 @@ def printLocations(team):
                 s += sticker + ": " + loc[building][floor][sticker] + "\n"
     return s
 
+# Prints progress of a team and the stickers they have found in location order
 def teamprogress(team):
     teams = getTeams()
     info = getData()
