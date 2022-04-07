@@ -273,16 +273,13 @@ async def addsticker(ctx, name='', code='', points='', *, hint=''):
 async def addstickers(ctx, *, stickers):
     if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles and ctx.message.author.id not in CONFIG["admins"]: # Ensures that user has proper permissions
         await ctx.send(MESSAGES["noAccess"])
-    stickers = stickers.split(",")
-    count = 1
     for sticker in stickers:
         sticker = sticker.strip().split()
         if len(sticker) < 4 or not sticker[2].isdigit(): # Error checking
-            await ctx.send("Invalid input for input number {}, make sure your input is in format `!addsticker <sticker> <authCode> <points> <hint>`".format(count))
+            await ctx.send("Invalid input for input number {}, make sure your input is in format `<sticker> <authCode> <points> <hint>`".format(sticker[0].upper() + " " + sticker[1].upper()))
             continue
         output = data.addStickerToDatabase(sticker[0].upper()+sticker[1].upper(), sticker[2], " ".join(sticker[3:]))
-        await ctx.send(output[:7] + " {}".format(count) + output[7:])
-        count += 1
+        await ctx.send(output[:7] + " {}".format(sticker[0].upper() + " " + sticker[1].upper()) + output[7:])
 
 # Removes a sticker from the database
 @bot.command(pass_context=True)
@@ -295,7 +292,7 @@ async def removesticker(ctx, name='', code=''):
         return
     
     else:
-        await ctx.send(data.removeStickerFromDatabase(name.upper()+code))
+        await ctx.send(data.removeStickerFromDatabase(name.upper()+code.upper()))
 
 # Changes a sticker's name
 @bot.command(pass_context=True)
@@ -307,11 +304,11 @@ async def changestickername(ctx, name='', code='', newname='', newcode =''):
         await ctx.send("Invalid input, make sure your input is in format `!changestickername <sticker> <authCode> <new sticker> <new authCode>`")
         return
 
-    elif name.upper()+code == newname.upper()+newcode: # Error checking
+    elif name.upper()+code.upper() == newname.upper()+newcode.upper(0): # Error checking
         await ctx.send("You have entered the same name, please try again.")
 
     else:
-        await ctx.send(data.updateStickerName(name.upper()+code, newname.upper()+newcode))
+        await ctx.send(data.updateStickerName(name.upper()+code.upper(), newname.upper()+newcode))
 
 # Updates a sticker's hint
 @bot.command(pass_context=True)
@@ -324,7 +321,7 @@ async def changestickerhint(ctx, name='', code='', *, hint=''):
         return
 
     else:
-        await ctx.send(data.updateHint(name.upper()+code, hint))
+        await ctx.send(data.updateHint(name.upper()+code.upper(), hint))
 
 # Updates a sticker's point value
 @bot.command(pass_context=True)
@@ -337,7 +334,7 @@ async def changestickerpoints(ctx, name='', code='', points=''):
         return
 
     else:
-        await ctx.send(data.updatePoints(name.upper()+code, points))
+        await ctx.send(data.updatePoints(name.upper()+code.upper(), points))
 
 # Changes a team's name
 @bot.command(pass_context=True)
@@ -404,7 +401,22 @@ async def addstickertolocation(ctx, building='', floor='', name='', code='', *, 
         return
     
     else:
-        await ctx.send(data.addStickerToLocation(building.upper(), floor, name.upper()+code, location))
+        await ctx.send(data.addStickerToLocation(building.upper(), floor, name.upper()+code.upper(), location))
+
+# Adds stickers to a location
+@bot.command(pass_context=True)
+async def addstickerstolocation(ctx, *, stickers):
+    if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles and ctx.message.author.id not in CONFIG["admins"]: # Ensures that user has proper permissions
+        await ctx.send(MESSAGES["noAccess"])
+    
+    stickers = stickers.split(",")
+    for sticker in stickers:
+        sticker = sticker.strip().split()
+        if len(sticker) < 5 or not sticker[1].isdigit(): # Error checking
+            await ctx.send("Invalid input for input number {}, make sure your input is in format `<building> <floor> <name> <code> <location>`".format(sticker[2].upper() + " " + sticker[3].upper()))
+            continue
+
+        await ctx.send("Sticker {}: ".format(sticker[2].upper() + " " + sticker[3].upper()) + data.addStickerToLocation(sticker[0].upper(), sticker[1], sticker[2].upper()+sticker[3].upper(), " ".join(sticker[4:])))
 
 # Removes a sticker from a location
 @bot.command(pass_context=True)
@@ -412,12 +424,12 @@ async def removestickerfromlocation(ctx, building='', floor='', name='', code=''
     if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles and ctx.message.author.id not in CONFIG["admins"]: # Ensures that user has proper permissions
         await ctx.send(MESSAGES["noAccess"])
     
-    elif '' in [building, floor, name, code] or not floor.isdigit() or not code.isdigit(): # Error checking
-        await ctx.send("Invalid input, make sure your input is in format `!addstickertolocation <building> <floor> <name> <code> <location>`")
+    elif '' in [building, floor, name, code] or not floor.isdigit(): # Error checking
+        await ctx.send("Invalid input, make sure your input is in format `!removestickerfromlocation <building> <floor> <name> <code> <location>`")
         return
     
     else:
-        await ctx.send(data.removeStickerFromLocation(building.upper(), floor, name.upper()+code))
+        await ctx.send(data.removeStickerFromLocation(building.upper(), floor, name.upper()+code.upper()))
 
 
 '==========================================================================================================================================='
