@@ -31,7 +31,7 @@ def check_configured():
     if config["scoreboard"] == ["list of valid scoreboard channels (ints, not strings)"]:
         return "Please set up your scoreboard channels in the config file!"
     return ""
-    
+
 # Ensure that the user has set up the needed config files.
 if check_configured() != "":
     exit(check_configured())
