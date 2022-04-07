@@ -17,6 +17,10 @@ def check_configured():
         return "Please create the config.json file, or ensure that it is correctly named."
     if not exists("./config/teams.json"):
         return "Please create the teams.json file, or ensure that it is correctly named."
+    if not exists("./config/data.json"):
+        return "Please create the data.json file, or ensure that it is correctly named."
+    if not exists("./config/locations.json"):
+        return "Please create the locations.json file, or ensure that it is correctly named."
     config = json.load(open("./config/config.json"))
     if config["token"] == "inserttokentocontinue":
         return "Please enter a token to connect to your bot!"
