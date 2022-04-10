@@ -77,11 +77,11 @@ def printTeams():
 def printStickers():
     stickers = getData()
     returnlist = []
-    s = '```'
+    s = '```\n'
     for sticker in stickers:
         if len(s) + len(namesplit(sticker).ljust(15) + stickers[sticker]["points"] + " " + stickers[sticker]["hint"] + "\n") + 3 >= 2000:
             returnlist.append(s+"```")
-            s = '```'
+            s = '```\n'
         s += namesplit(sticker).ljust(15) + stickers[sticker]["points"] + " " + stickers[sticker]["hint"] + "\n"
     returnlist.append(s+"```")
     return returnlist
@@ -233,7 +233,7 @@ def printLocations(team):
     loc = getLocations()
     teams = getTeams()
     returnlist = []
-    s = '```'
+    s = '```\n'
     if team != "" and team not in teams:
         return "This team does not exist!"
     if len(loc) == 0:
@@ -241,22 +241,22 @@ def printLocations(team):
     for building in loc:
         if len(s) + len(building + '\n') + 3 >= 2000:
             returnlist.append(s+"```")
-            s = '```'
+            s = '```\n'
         s += building + '\n'
         for floor in loc[building]:
             if len(s) + len("\tFloor " + floor + ":\n") + 3 >= 2000:
                 returnlist.append(s+"```")
-                s = '```'
+                s = '```\n'
             s += "\tFloor " + floor + ":\n"
             if len(loc[building][floor]) == 0:
                 if len(s) + len("\t\tNo stickers on this floor.\n") + 3 >= 2000:
                     returnlist.append(s+"```")
-                    s = '```'
+                    s = '```\n'
                 s += "\t\tNo stickers on this floor.\n"
             for sticker in loc[building][floor]:
                 if len(s) + len("\t\t" + namesplit(sticker) + ": " + loc[building][floor][sticker] + "\n") + 9 >= 2000:
                     returnlist.append(s+"```")
-                    s = '```'
+                    s = '```\n'
                 s += "\t\t"
                 if team != "":
                     if sticker in teams[team]["stickers"]:
