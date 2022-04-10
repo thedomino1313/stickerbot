@@ -76,10 +76,15 @@ def printTeams():
 
 def printStickers():
     stickers = getData()
+    returnlist = []
     s = '```'
     for sticker in stickers:
+        if len(s) + len(namesplit(sticker).ljust(15) + stickers[sticker]["points"] + " " + stickers[sticker]["hint"] + "\n") + 3 >= 2000:
+            returnlist.append(s+"```")
+            s = '```'
         s += namesplit(sticker).ljust(15) + stickers[sticker]["points"] + " " + stickers[sticker]["hint"] + "\n"
-    return s + "```"
+    returnlist.append(s+"```")
+    return returnlist
 
 # def getNumNames(teamName):
 #     return getTeams()[teamName]["name_changes"]
