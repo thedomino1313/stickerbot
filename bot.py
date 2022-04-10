@@ -11,6 +11,8 @@ from discord.ext import commands
 
 import data
 
+from time import time
+
 # Makes sure that the bot has been initialized correctly
 def check_configured():
     if not exists("./config/config.json"):
@@ -438,6 +440,11 @@ async def removestickerfromlocation(ctx, building='', floor='', name='', code=''
 # Sticker code input
 @bot.command(pass_context=True)
 async def code(ctx, codeword='', key=''):
+    t = time()
+    if t < 1649725200:
+        await ctx.send("The hunt hasn't started yet!")
+        return
+    
     team = ctx.message.channel
 
     if team.name not in data.getTeams(): # Error checking
