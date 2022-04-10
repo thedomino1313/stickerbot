@@ -44,6 +44,14 @@ def replaceEmojis(word): # Converts unicode emojis to an empty box for scoreboar
             s += '□'
     return s
 
+def namesplit(code):
+    names = ["WIND", "FUSE", "VIPER", "WMAP", "FORGE", "MILL", "SHUTTLE", "RANGER", "POES", "APOLLO", "ICESAT", "OCO", "GEMINI", "STEREO", "PACE", "SOYUZ", "POLUX", "GLOBE", "GRACE", "GRAIL", "CUBESAT", "S00", "RIGEL", "ACRUX", "TDRS", "VAP", "RRS", "UARS"]
+    for name in names:
+        if name in code:
+            code = code[0:len(name)] + " " + code[len(name):]
+            break
+    return code
+
 '==========================================================================================================================================='
 'Accessors'
 
@@ -70,7 +78,7 @@ def printStickers():
     stickers = getData()
     s = '```'
     for sticker in stickers:
-        s += sticker.ljust(15) + stickers[sticker]["points"] + " " + stickers[sticker]["hint"] + "\n"
+        s += namesplit(sticker).ljust(15) + stickers[sticker]["points"] + " " + stickers[sticker]["hint"] + "\n"
     return s + "```"
 
 # def getNumNames(teamName):
@@ -237,7 +245,7 @@ def printLocations(team):
                         s += "(1/1) "
                     else:
                         s += "(0/1) "
-                s += sticker + ": " + loc[building][floor][sticker] + "\n"
+                s += namesplit(sticker) + ": " + loc[building][floor][sticker] + "\n"
     return s
 
 # Prints progress of a team and the stickers they have found in location order
