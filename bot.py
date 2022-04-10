@@ -310,7 +310,7 @@ async def changestickername(ctx, name='', code='', newname='', newcode =''):
         await ctx.send("Invalid input, make sure your input is in format `!changestickername <sticker> <authCode> <new sticker> <new authCode>`")
         return
 
-    elif name.upper()+code.upper() == newname.upper()+newcode.upper(0): # Error checking
+    elif name.upper()+code.upper() == newname.upper()+newcode.upper(): # Error checking
         await ctx.send("You have entered the same name, please try again.")
 
     else:
