@@ -214,7 +214,9 @@ async def stickerlist(ctx):
         await ctx.send(MESSAGES["noAccess"])
     
     else:
-        await ctx.send(data.printStickers())
+        stickers = data.printStickers()
+        embedmessage=discord.Embed(title=f"Stickers:", description=stickers, color=0x5bcdee)
+        await ctx.send(embed=embedmessage)
 
 # Send the list of teams
 @bot.command(pass_context=True)
