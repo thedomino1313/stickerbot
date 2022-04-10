@@ -232,18 +232,31 @@ def removeStickerFromLocation(building, floor, sticker):
 def printLocations(team):
     loc = getLocations()
     teams = getTeams()
-    s = ''
+    returnlist = []
+    s = '```'
     if team != "" and team not in teams:
         return "This team does not exist!"
     if len(loc) == 0:
         return "There are no locations yet."
     for building in loc:
+        if len(s) + len(building + '\n') + 3 >= 2000:
+            returnlist.append(s+"```")
+            s = '```'
         s += building + '\n'
         for floor in loc[building]:
+            if len(s) + len("\tFloor " + floor + ":\n") + 3 >= 2000:
+                returnlist.append(s+"```")
+                s = '```'
             s += "\tFloor " + floor + ":\n"
             if len(loc[building][floor]) == 0:
+                if len(s) + len("\t\tNo stickers on this floor.\n") + 3 >= 2000:
+                    returnlist.append(s+"```")
+                    s = '```'
                 s += "\t\tNo stickers on this floor.\n"
             for sticker in loc[building][floor]:
+                if len(s) + len("\t\t" + namesplit(sticker) + ": " + loc[building][floor][sticker] + "\n") + 9 >= 2000:
+                    returnlist.append(s+"```")
+                    s = '```'
                 s += "\t\t"
                 if team != "":
                     if sticker in teams[team]["stickers"]:
