@@ -264,7 +264,8 @@ def printLocations(team):
                     else:
                         s += "(0/1) "
                 s += namesplit(sticker) + ": " + loc[building][floor][sticker] + "\n"
-    return s
+    returnlist.append(s+ "```")
+    return returnlist
 
 # Prints progress of a team and the stickers they have found in location order
 def teamprogress(team):

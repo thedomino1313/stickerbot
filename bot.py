@@ -238,7 +238,9 @@ async def showlocations(ctx, team=""):
         return
     
     else:
-        await ctx.send(data.printLocations(team))
+        locs = data.printLocations(team)
+        for loc in locs:
+            await ctx.send(loc)
 
 # Outputs a team's info
 @bot.command(pass_context=True)
