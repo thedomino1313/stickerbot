@@ -288,9 +288,9 @@ def addSticker(teamName, stickerName, stickerCode):
         teams[teamName]["lastnewhint"] = 0
         if any(full_name == x[0] for x in teams[teamName]["hint"]): # Checks if the sticker found relates to a hint that the team has unlocked
             s += "\nYou have cleared the standard hint: {}".format(teams[teamName]["hint"].pop(teams[teamName]["hint"].index([full_name, getData()[full_name]["hint"]]))[1])
-        if int(info[full_name]["points"]) > 1 and len(teams[teamName]["ghint"]) > 0: # Checks if the sticker found relates to the team's golden hint
+        if int(info[full_name]["points"]) > 1 and len(teams[teamName]["ghint"]) > 0: # Checks if the sticker found relates to the team's special hint
             teams[teamName]["ghintcomplete"] = True 
-            s += "\nYou have cleared the golden hint: {}".format(teams[teamName]["ghint"][1])
+            s += "\nYou have cleared the special hint: {}".format(teams[teamName]["ghint"][1])
             teams[teamName]["ghint"] = []
         if len(teams[teamName]["stickers"]) == len(info): # Checks if the team has found every sticker
             s += "\nYou have found all of the stickers!"
@@ -356,16 +356,16 @@ def getHint(teamName):
     for hint in team["hint"]:
         output += hint[1] + "\n"
     
-    if newghint: # Logic for golden hint message
-        output += "You have just unlocked a golden hint! The hint is:\n{}".format(team["ghint"][1])
+    if newghint: # Logic for special hint message
+        output += "You have just unlocked a special hint! The hint is:\n{}".format(team["ghint"][1])
     elif team["count"] >= 0 and not team["ghintcomplete"] and len(team["ghint"]) == 0 and len(ghints) == 0:
-        output += "You found all of the golden stickers without a golden hint, congratulations!"
+        output += "You found all of the special stickers without a special hint, congratulations!"
     elif len(team["ghint"]) == 0 and team["count"] < 20:
-         output += "You will unlock a golden sticker hint after you find {} more stickers.\n".format(20-team["count"])
+         output += "You will unlock a special sticker hint after you find {} more stickers.\n".format(20-team["count"])
     elif not team["ghintcomplete"]:
-        output += "Your golden sticker hint is:\n{}".format(team["ghint"][1])
+        output += "Your special sticker hint is:\n{}".format(team["ghint"][1])
     else:
-        output += "You have already solved your golden hint, congratulations!"
+        output += "You have already solved your special hint, congratulations!"
     
     teams = getTeams()
     teams[teamName] = team
