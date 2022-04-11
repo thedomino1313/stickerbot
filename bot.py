@@ -257,7 +257,9 @@ async def teamprogress(ctx, team=""):
         return
     
     else:
-        await ctx.send(data.teamprogress(team))
+        progress = data.teamprogress(team)
+        for msg in progress:
+            await ctx.send(msg)
 
 '==========================================================================================================================================='
 'Data Editing Commands'

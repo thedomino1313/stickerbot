@@ -235,9 +235,9 @@ def printLocations(team):
     returnlist = []
     s = '```\n'
     if team != "" and team not in teams:
-        return "This team does not exist!"
+        return ["This team does not exist!"]
     if len(loc) == 0:
-        return "There are no locations yet."
+        return ["There are no locations yet."]
     for building in loc:
         if len(s) + len(building + '\n') + 3 >= 2000:
             returnlist.append(s+"```")
@@ -269,6 +269,7 @@ def printLocations(team):
 
 # Prints progress of a team and the stickers they have found in location order
 def teamprogress(team):
+    returnlist = []
     teams = getTeams()
     info = getData()
     totalS = 0
@@ -276,7 +277,7 @@ def teamprogress(team):
     teamS = 0
     teamG = 0
     if team not in teams:
-        return "This team does not exist!"
+        return ["This team does not exist!"]
     for sticker in info:
         if info[sticker]["points"] == '1':
             totalS += 1
@@ -288,9 +289,10 @@ def teamprogress(team):
                 teamG += 1
 
     s = ''
-    s += "Team {} has found:\n{}/{} standard stickers\n{}/{} gold stickers".format(team, teamS, totalS, teamG, totalG)
-    s += "\nSticker location report: \n{}".format(printLocations(team))
-    return s
+    s += "Team {} has found:\n{}/{} standard stickers\n{}/{} gold stickers\nSticker location report:".format(team, teamS, totalS, teamG, totalG)
+    returnlist.append(s)
+    returnlist += printLocations(team)
+    return returnlist
     
 
 '==========================================================================================================================================='
