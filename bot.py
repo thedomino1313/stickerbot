@@ -445,7 +445,7 @@ async def removestickerfromlocation(ctx, building='', floor='', name='', code=''
 @bot.command(pass_context=True)
 async def code(ctx, codeword='', key=''):
     t = time()
-    if t < 1649725200:
+    if t < 1649682000:
         await ctx.send("The hunt hasn't started yet!")
         return
     
@@ -548,7 +548,7 @@ async def help(ctx):
 @bot.command(pass_context=True)
 async def hint(ctx):
     t = time()
-    if t < 1649725200:
+    if t < 1649682000:
         await ctx.send("The hunt hasn't started yet!")
         return
     
