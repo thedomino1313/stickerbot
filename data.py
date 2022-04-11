@@ -432,3 +432,28 @@ def scoreBoard():
 
     s += ("╚" + "═"*(maxLen +2) + "╩" + "═"*(8) +"╩" + "═"*(8) + "╝" + "\n") # Bottom border
     return s
+
+'==========================================================================================================================================='
+'Data Checkers'
+
+def checkequivalence():
+    loc = getLocations()
+    data = getData()
+    s = ''
+    locSticks = set()
+    dataSticks = set()
+    for building in loc:
+        for floor in loc[building]:
+            for sticker in loc[building][floor]:
+                locSticks.add(sticker)
+    for sticker in data:
+        dataSticks.add(sticker)
+    if not locSticks.issubset(dataSticks):
+        s += "These stickers are in the locations list, but not in the main sticker data:\n"
+        for sticker in locSticks-dataSticks:
+            s += sticker + " "
+    if not dataSticks.issubset(locSticks):
+        s += "\nThese stickers are in the main sticker data, but not in the locations list:\n"
+        for sticker in dataSticks-locSticks:
+            s += sticker + " "
+    return s

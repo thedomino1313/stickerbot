@@ -261,6 +261,12 @@ async def teamprogress(ctx, team=""):
         for msg in progress:
             await ctx.send(msg)
 
+@bot.command(pass_context=True)
+async def checkdata(ctx):
+    if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles and ctx.message.author.id not in CONFIG["admins"]: # Ensures that user has proper permissions
+        await ctx.send(MESSAGES["noAccess"])
+    await ctx.send(data.checkequivalence())
+
 '==========================================================================================================================================='
 'Data Editing Commands'
 
