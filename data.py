@@ -2,8 +2,6 @@ import json
 from random import choice
 from time import time
 
-from numpy import full
-
 '==========================================================================================================================================='
 'Constants'
 
