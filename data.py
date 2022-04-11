@@ -2,6 +2,8 @@ import json
 from random import choice
 from time import time
 
+from numpy import full
+
 '==========================================================================================================================================='
 'Constants'
 
@@ -318,9 +320,10 @@ def addSticker(teamName, stickerName, stickerCode):
         if any(full_name == x[0] for x in teams[teamName]["hint"]): # Checks if the sticker found relates to a hint that the team has unlocked
             s += "\nYou have cleared the standard hint: {}".format(teams[teamName]["hint"].pop(teams[teamName]["hint"].index([full_name, getData()[full_name]["hint"]]))[1])
         if int(info[full_name]["points"]) > 1 and len(teams[teamName]["ghint"]) > 0: # Checks if the sticker found relates to the team's special hint
-            teams[teamName]["ghintcomplete"] = True 
-            s += "\nYou have cleared the special hint: {}".format(teams[teamName]["ghint"][1])
-            teams[teamName]["ghint"] = []
+            if teams[teamName]["ghint"][0] == full_name:
+                teams[teamName]["ghintcomplete"] = True 
+                s += "\nYou have cleared the special hint: {}".format(teams[teamName]["ghint"][1])
+                teams[teamName]["ghint"] = []
         if len(teams[teamName]["stickers"]) == len(info): # Checks if the team has found every sticker
             s += "\nYou have found all of the stickers!"
         jdump(jteams, teams)
