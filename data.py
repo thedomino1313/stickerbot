@@ -298,28 +298,6 @@ def teamprogress(team):
 '==========================================================================================================================================='
 'Main Operations'
 
-def fix():
-    teams = getTeams()
-    data = getData()
-    ghints = []
-    for team in teams:
-        if team == "testing2":
-            print(teams[team]["stickers"])
-            for sticker in data: # Loops through all stickers and determines if the team can receive a hint for them
-                if (sticker not in teams[team]["stickers"]) and ([sticker, data[sticker]["hint"]] not in teams[team]["ghint"]):
-                    if not data[sticker]["points"] == '1':
-                        print(sticker) 
-                        ghints.append((sticker, data[sticker]["hint"]))
-            for i in range(max(teams[team]["count"]//20-1-len(teams[team]["ghint"]), 0)):
-                if len(ghints) == 0:
-                    break
-                newhint = choice(ghints)
-                ghints.pop(ghints.index(newhint))
-                teams[team]["ghint"].append(newhint)
-                teams[team]["ghintcomplete"] = True
-    jdump(jteams, teams)    
-
-
 # Adds a sticker to a team's collection
 def addSticker(teamName, stickerName, stickerCode):
     info = getData()
