@@ -449,10 +449,6 @@ async def removestickerfromlocation(ctx, building='', floor='', name='', code=''
 '==========================================================================================================================================='
 'Standard User Commands'
 
-@bot.command(pass_context=True)
-async def fix(ctx):
-    data.fix()
-
 # Sticker code input
 @bot.command(pass_context=True)
 async def code(ctx, codeword='', key=''):
