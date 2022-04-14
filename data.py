@@ -310,7 +310,7 @@ def fix():
                     if not data[sticker]["points"] == '1':
                         print(sticker) 
                         ghints.append((sticker, data[sticker]["hint"]))
-            for i in range(max(teams[team]["count"]//20-1, 0)):
+            for i in range(max(teams[team]["count"]//20-1-len(teams[team]["ghint"]), 0)):
                 if len(ghints) == 0:
                     break
                 newhint = choice(ghints)
