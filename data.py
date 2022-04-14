@@ -303,15 +303,20 @@ def fix():
     data = getData()
     ghints = []
     for team in teams:
-        for sticker in data: # Loops through all stickers and determines if the team can receive a hint for them
-            if sticker not in teams[team]["stickers"] and [sticker, data[sticker]["hint"]] not in teams[team]["ghint"]:
-                if not data[sticker]["points"] == '1':
-                    ghints.append((sticker, data[sticker]["hint"]))
-        for i in range(max(teams[team]["count"]//20-1, 0)):
-            newhint = choice(ghints)
-            ghints.pop(ghints.index(newhint))
-            teams[team]["ghint"].append(newhint)
-            teams[team]["ghintcomplete"] = True
+        if team == "testing2":
+            print(teams[team]["stickers"])
+            for sticker in data: # Loops through all stickers and determines if the team can receive a hint for them
+                if (sticker not in teams[team]["stickers"]) and ([sticker, data[sticker]["hint"]] not in teams[team]["ghint"]):
+                    if not data[sticker]["points"] == '1':
+                        print(sticker) 
+                        ghints.append((sticker, data[sticker]["hint"]))
+            for i in range(max(teams[team]["count"]//20-1, 0)):
+                if len(ghints) == 0:
+                    break
+                newhint = choice(ghints)
+                ghints.pop(ghints.index(newhint))
+                teams[team]["ghint"].append(newhint)
+                teams[team]["ghintcomplete"] = True
     jdump(jteams, teams)    
 
 
@@ -337,7 +342,7 @@ def addSticker(teamName, stickerName, stickerCode):
         if int(info[full_name]["points"]) > 1 and len(teams[teamName]["ghint"]) > 0: # Checks if the sticker found relates to the team's special hint
             if teams[teamName]["ghint"][0] == full_name:
                 teams[teamName]["ghintcomplete"] = True 
-                s += "\nYou have cleared the special hint: {}".format(teams[teamName]["ghint"][1])
+                s += "\nYou have cleared the special hint: {}".format(teams[teamName]["ghint"].pop(teams[teamName]["ghint"].index([full_name, getData()[full_name]["ghint"]]))[1])
                 teams[teamName]["ghint"] = []
         if len(teams[teamName]["stickers"]) == len(info): # Checks if the team has found every sticker
             s += "\nYou have found all of the stickers!"
@@ -404,15 +409,6 @@ def getHint(teamName):
         output += "You have {} available standard hints:\n".format(len(team["hint"]))
     for hint in team["hint"]:
         output += hint[1] + "\n"
-    
-    if newghint: # Logic for special hint message
-        output += "You have just unlocked a special hint! The hint is:\n{}".format(team["ghint"][1])
-    elif len(team["ghint"]) == 0 and team["count"] < 20:
-         output += "You will unlock a special sticker hint after you find {} more stickers.\n".format(20-team["count"])
-    elif not team["ghintcomplete"]:
-        output += "Your special sticker hint is:\n{}".format(team["ghint"][1])
-    else:
-        output += "You have already solved your special hint, congratulations!"
     
     if len(ghints) == 0: # Logic for basic hint message
         output += "You have no more special hints to unlock.\n"
