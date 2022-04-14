@@ -298,6 +298,23 @@ def teamprogress(team):
 '==========================================================================================================================================='
 'Main Operations'
 
+def fix():
+    teams = getTeams()
+    data = getData()
+    ghints = []
+    for team in teams:
+        for sticker in data: # Loops through all stickers and determines if the team can receive a hint for them
+            if sticker not in teams[team]["stickers"] and [sticker, data[sticker]["hint"]] not in teams[team]["ghint"]:
+                if not data[sticker]["points"] == '1':
+                    ghints.append((sticker, data[sticker]["hint"]))
+        for i in range(max(teams[team]["count"]//20-1, 0)):
+            newhint = choice(ghints)
+            ghints.pop(ghints.index(newhint))
+            teams[team]["ghint"].append(newhint)
+            teams[team]["ghintcomplete"] = True
+    jdump(jteams, teams)    
+
+
 # Adds a sticker to a team's collection
 def addSticker(teamName, stickerName, stickerCode):
     info = getData()
@@ -324,6 +341,8 @@ def addSticker(teamName, stickerName, stickerCode):
                 teams[teamName]["ghint"] = []
         if len(teams[teamName]["stickers"]) == len(info): # Checks if the team has found every sticker
             s += "\nYou have found all of the stickers!"
+        if teams[teamName]["count"] % 20 == 0:
+            teams[teamName]["ghintcomplete"] = False
         jdump(jteams, teams)
         return s
 
@@ -352,7 +371,7 @@ def getHint(teamName):
     hints = []
     ghints = []
     for sticker in data: # Loops through all stickers and determines if the team can receive a hint for them
-        if sticker not in team["stickers"] and [sticker, data[sticker]["hint"]] not in team["hint"]:
+        if sticker not in team["stickers"] and [sticker, data[sticker]["hint"]] not in team["hint"] and [sticker, data[sticker]["hint"]] not in team["ghint"]:
             if data[sticker]["points"] == '1':
                 hints.append((sticker, data[sticker]["hint"]))
             else:
@@ -365,8 +384,8 @@ def getHint(teamName):
         newh = True
     
     newghint = False # Bool to see if a new hint is added
-    if team["count"] >= 20 and not team["ghintcomplete"] and len(team["ghint"]) == 0 and len(ghints) > 0: # Validating
-        team["ghint"] = choice(ghints)
+    if team["count"] >= 20 and not team["ghintcomplete"] and len(ghints) > 0: # Validating
+        team["ghint"].append(choice(ghints))
         newghint = True
     
     output = ''
@@ -388,8 +407,6 @@ def getHint(teamName):
     
     if newghint: # Logic for special hint message
         output += "You have just unlocked a special hint! The hint is:\n{}".format(team["ghint"][1])
-    elif team["count"] >= 0 and not team["ghintcomplete"] and len(team["ghint"]) == 0 and len(ghints) == 0:
-        output += "You found all of the special stickers without a special hint, congratulations!"
     elif len(team["ghint"]) == 0 and team["count"] < 20:
          output += "You will unlock a special sticker hint after you find {} more stickers.\n".format(20-team["count"])
     elif not team["ghintcomplete"]:
@@ -397,6 +414,22 @@ def getHint(teamName):
     else:
         output += "You have already solved your special hint, congratulations!"
     
+    if len(ghints) == 0: # Logic for basic hint message
+        output += "You have no more special hints to unlock.\n"
+    elif newghint:
+        output += "You have a new special hint!\n"
+    else: 
+        output += "You have {} more stickers to find until you can receive another special hint.\n".format(20 - (team["count"]%20))
+    
+    if len(team["ghint"]) == 0: # Logic for listing all standard hints
+        output += "You currently have no available special hints.\n"
+    elif len(team["ghint"]) == 1:
+        output += "You currently have one available special hint:\n"
+    else:
+        output += "You have {} available special hints:\n".format(len(team["ghint"]))
+    for hint in team["hint"]:
+        output += hint[1] + "\n"
+
     teams = getTeams()
     teams[teamName] = team
     jdump(jteams, teams)
