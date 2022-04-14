@@ -427,7 +427,7 @@ def getHint(teamName):
         output += "You currently have one available special hint:\n"
     else:
         output += "You have {} available special hints:\n".format(len(team["ghint"]))
-    for hint in team["hint"]:
+    for hint in team["ghint"]:
         output += hint[1] + "\n"
 
     teams = getTeams()
