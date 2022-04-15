@@ -457,7 +457,7 @@ async def code(ctx, codeword='', key=''):
         await ctx.send("The hunt hasn't started yet!")
         return
     
-    elif (t > 1649725200 and t < 1649768400) or (t > 1649811600 and t < 1649854800) or (t > 1649898000 and t < 1649941200) or (t > 1649984400 and t < 1650027600):
+    elif (t > 1649725200 and t < 1649768400) or (t > 1649811600 and t < 1649854800) or (t > 1649898000 and t < 1649941200) or (t > 1649984400 and t < 1650027600) and discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles:
         await ctx.send("The hunt is currently closed, please wait until 9 AM to enter codes or request hints again.")
         return
     
