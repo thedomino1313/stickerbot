@@ -317,7 +317,7 @@ def addSticker(teamName, stickerName, stickerCode):
         teams[teamName]["lastnewhint"] = 0
         if any(full_name == x[0] for x in teams[teamName]["hint"]): # Checks if the sticker found relates to a hint that the team has unlocked
             s += "\nYou have cleared the standard hint: {}".format(teams[teamName]["hint"].pop(teams[teamName]["hint"].index([full_name, getData()[full_name]["hint"]]))[1])
-        if int(info[full_name]["points"]) > 1 and len(teams[teamName]["ghint"]) > 0: # Checks if the sticker found relates to the team's special hint
+        if any(full_name == x[0] for x in teams[teamName]["ghint"]): # Checks if the sticker found relates to the team's special hint
             if teams[teamName]["ghint"][0] == full_name:
                 teams[teamName]["ghintcomplete"] = True 
                 s += "\nYou have cleared the special hint: {}".format(teams[teamName]["ghint"].pop(teams[teamName]["ghint"].index([full_name, getData()[full_name]["ghint"]]))[1])
