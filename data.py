@@ -319,7 +319,7 @@ def addSticker(teamName, stickerName, stickerCode):
             s += "\nYou have cleared the standard hint: {}".format(teams[teamName]["hint"].pop(teams[teamName]["hint"].index([full_name, getData()[full_name]["hint"]]))[1])
         if any(full_name == x[0] for x in teams[teamName]["ghint"]): # Checks if the sticker found relates to the team's special hint
             teams[teamName]["ghintcomplete"] = True 
-            s += "\nYou have cleared the special hint: {}".format(teams[teamName]["ghint"].pop(teams[teamName]["ghint"].index([full_name, getData()[full_name]["ghint"]]))[1])
+            s += "\nYou have cleared the special hint: {}".format(teams[teamName]["ghint"].pop(teams[teamName]["ghint"].index([full_name, getData()[full_name]["hint"]]))[1])
             teams[teamName]["ghint"] = []
         if len(teams[teamName]["stickers"]) == len(info): # Checks if the team has found every sticker
             s += "\nYou have found all of the stickers!"
