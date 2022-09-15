@@ -228,6 +228,29 @@ def removeStickerFromLocation(building, floor, sticker):
         return "This floor does not exist."
     return "This building does not exist."
 
+# Removes all stickers from all locations
+def removeAllStickersFromLocations(building, floor):
+    loc = getLocations()
+    if building in loc:
+        if floor:
+            if floor in loc[building]:
+                loc[building][floor] = dict()
+                jdump(jloc, loc)
+                return "All stickers removed from location."
+            return "This floor does not exist."
+        else:
+            for f in loc[building]:
+                loc[building][f] = dict()
+            jdump(jloc, loc)
+            return "All stickers removed from location."
+    elif building == "ALL":
+        for b in loc:
+            for f in loc[b]:
+                loc[b][f] = dict()
+        jdump(jloc, loc)
+        return "All stickers removed from all locations."
+    return "This building does not exist."
+
 # Prints all locations and their stickers
 def printLocations(team):
     loc = getLocations()

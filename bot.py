@@ -46,8 +46,7 @@ TOKEN = CONFIG["token"]
 GUILD = CONFIG["guild"]
 
 
-intents = discord.Intents.default()
-intents.members = True # Subscribe to the privileged members intent.
+intents = discord.Intents.all()
 bot = commands.Bot(command_prefix='!', intents=intents)
 
 bot.remove_command('help')
@@ -439,12 +438,23 @@ async def removestickerfromlocation(ctx, building='', floor='', name='', code=''
         await ctx.send(MESSAGES["noAccess"])
     
     elif '' in [building, floor, name, code] or not floor.isdigit(): # Error checking
-        await ctx.send("Invalid input, make sure your input is in format `!removestickerfromlocation <building> <floor> <name> <code> <location>`")
+        await ctx.send("Invalid input, make sure your input is in format `!removestickerfromlocation <building> <floor> <name> <code>`")
         return
     
     else:
         await ctx.send(data.removeStickerFromLocation(building.upper(), floor, name.upper()+code.upper()))
 
+# Clears all stickers from all locations
+@bot.command(pass_context=True)
+async def clearlocation(ctx, building='', floor=''):
+    if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles and ctx.message.author.id not in CONFIG["admins"]: # Ensures that user has proper permissions
+        await ctx.send(MESSAGES["noAccess"])
+    
+    elif building == '' or (floor != '' and not floor.isdigit()):
+        await ctx.send("Invalid input, make sure your input is in format `!clearlocations <building> <floor>`")
+
+    else:
+        await ctx.send(data.removeAllStickersFromLocations(building.upper(), floor))
 
 '==========================================================================================================================================='
 'Standard User Commands'
