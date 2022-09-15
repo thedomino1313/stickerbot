@@ -46,8 +46,7 @@ TOKEN = CONFIG["token"]
 GUILD = CONFIG["guild"]
 
 
-intents = discord.Intents.default()
-intents.members = True # Subscribe to the privileged members intent.
+intents = discord.Intents.all()
 bot = commands.Bot(command_prefix='!', intents=intents)
 
 bot.remove_command('help')
@@ -448,7 +447,6 @@ async def removestickerfromlocation(ctx, building='', floor='', name='', code=''
 # Clears all stickers from all locations
 @bot.command(pass_context=True)
 async def clearlocation(ctx, building='', floor=''):
-    await ctx.send("got it")
     if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles and ctx.message.author.id not in CONFIG["admins"]: # Ensures that user has proper permissions
         await ctx.send(MESSAGES["noAccess"])
     
