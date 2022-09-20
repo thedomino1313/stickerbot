@@ -459,6 +459,13 @@ async def clearlocation(ctx, building='', floor=''):
 '==========================================================================================================================================='
 'Standard User Commands'
 
+
+# Plugs the github
+@bot.command(pass_context=True)
+async def github(ctx):
+    await ctx.send("My code can be found here: https://github.com/thedomino1313/stickerbot")
+
+
 # Sticker code input
 @bot.command(pass_context=True)
 async def code(ctx, codeword='', key=''):
