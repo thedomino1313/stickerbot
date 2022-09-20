@@ -480,6 +480,7 @@ async def code(ctx, codeword='', key=''):
     
     elif t > 1650070800:
         await ctx.send("The hunt has closed, all scores are now final!")
+        return
 
     team = ctx.message.channel
 
