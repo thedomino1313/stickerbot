@@ -173,26 +173,27 @@ async def kill(ctx):
 
 # Delete a team
 @bot.command(pass_context=True)
-async def removeteam(ctx, *, team=''):
+async def removeteam(ctx, *, teams=''):
     if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles and ctx.message.author.id not in CONFIG["admins"]: # Ensures that user has proper permissions
         await ctx.send(MESSAGES["noAccess"])
     
-    elif team == '': # Error Checking
-        await ctx.send("Please list a team name to remove.")
+    elif teams == '': # Error Checking
+        await ctx.send("Please list a team or teams name to remove.")
     
     else:
-        while "  " in team: # Removes excess spaces
-            team = team.replace("  ", " ")
-        while "--" in team: # Removes excess dashes
-            team = team.replace("--", "-")
-        team = team.replace(" ", "-").lower() # Converts to channel friendly format
-        results = data.removeTeam(team)
-        if results == "Team removed!": # Ensures that the team exists in the database
-            channel = discord.utils.get(ctx.guild.channels, name=team)
-            await channel.delete() # Removes the team channel
-            role = discord.utils.get(ctx.guild.roles, name=team)
-            await role.delete() # Removes the team role
-        await ctx.send(results)
+        teams = teams.lower().split() # Converts to channel friendly format
+        for team in teams:
+            results = data.removeTeam(team)
+            if "removed" in results: # Ensures that the team exists in the database
+                channel = discord.utils.get(ctx.guild.channels, name=team)
+                await channel.delete() # Removes the team channel
+                try:
+                    role = discord.utils.get(ctx.guild.roles, name=team)
+                    await role.delete() # Removes the team role
+                except:
+                    role = discord.utils.get(ctx.guild.roles, name=team.upper())
+                    await role.delete() # Removes the team role
+            await ctx.send(results)
 
 # Scoreboard Generation
 @bot.command(pass_context=True)

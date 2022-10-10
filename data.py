@@ -160,7 +160,7 @@ def removeTeam(teamName):
     if teamName in teams: # Error checking
         teams.pop(teamName) # Removes the team from the database
         jdump(jteams, teams)
-        return "Team removed!"
+        return f"Team {teamName} removed!"
     return "Team already does not exist."
 
 # Changes a team's name
