@@ -34,6 +34,22 @@ def check_configured():
         return "Please set up your scoreboard channels in the config file!"
     return ""
 
+async def time_check(ctx):
+    t = time()
+    if t < 1665748800:
+        await ctx.send("The hunt hasn't started yet!")
+        return True
+    
+    elif (t > 1665806400 and t < 1665835200) or (t > 1665892800 and t < 1665921600) or (t > 1665979200 and t < 1666008000) and discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles:
+        await ctx.send("The hunt is currently closed, please wait until 8 AM to enter codes or request hints again.")
+        return True
+    
+    elif t > 1666065600:
+        await ctx.send("The hunt has closed, all scores are now final!")
+        return True
+    
+    return False
+
 # Ensure that the user has set up the needed config files.
 if check_configured() != "":
     exit(check_configured())
@@ -470,17 +486,7 @@ async def github(ctx):
 # Sticker code input
 @bot.command(pass_context=True)
 async def code(ctx, codeword='', key=''):
-    t = time()
-    if t < 1649682000:
-        await ctx.send("The hunt hasn't started yet!")
-        return
-    
-    elif (t > 1649725200 and t < 1649768400) or (t > 1649811600 and t < 1649854800) or (t > 1649898000 and t < 1649941200) or (t > 1649984400 and t < 1650027600) and discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles:
-        await ctx.send("The hunt is currently closed, please wait until 9 AM to enter codes or request hints again.")
-        return
-    
-    elif t > 1650070800:
-        await ctx.send("The hunt has closed, all scores are now final!")
+    if await time_check(ctx):
         return
 
     team = ctx.message.channel
@@ -498,6 +504,10 @@ async def code(ctx, codeword='', key=''):
 # Creates a new team and adds the founding member 
 @bot.command(pass_context=True)
 async def createteam(ctx,*,role_name=''):
+    if ctx.channel.id != CONFIG["maketeamchannel"]:
+        await ctx.send(f"This is not the correct channel, please go to <#{CONFIG['maketeamchannel']}>.")
+        return
+    
     if role_name == '': # Error checking
         await ctx.send("Please list a team name to create.")
         return
@@ -574,17 +584,8 @@ async def help(ctx):
 # Outputs hints
 @bot.command(pass_context=True)
 async def hint(ctx):
-    t = time()
-    if t < 1649682000:
-        await ctx.send("The hunt hasn't started yet!")
+    if await time_check(ctx):
         return
-    
-    elif (t > 1649725200 and t < 1649768400) or (t > 1649811600 and t < 1649854800) or (t > 1649898000 and t < 1649941200) or (t > 1649984400 and t < 1650027600) and discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles:
-        await ctx.send("The hunt is currently closed, please wait until 9 AM to enter codes or request hints again.")
-        return
-    
-    elif t > 1650070800:
-        await ctx.send("The hunt has closed, all scores are now final!")
     
     team = ctx.message.channel
 
