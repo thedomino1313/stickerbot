@@ -36,15 +36,15 @@ def check_configured():
 
 async def time_check(ctx):
     t = time()
-    if t < 1665748800:
+    if t < 1667217600:
         await ctx.send("The hunt hasn't started yet!")
         return True
     
-    elif (t > 1665806400 and t < 1665835200) or (t > 1665892800 and t < 1665921600) or (t > 1665979200 and t < 1666008000) and discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles:
+    elif (t > 1667264400 and t < 1667304000) or (t > 1667350800 and t < 1667390400) or (t > 1667437200 and t < 1667476800) or (t > 1667523600 and t < 1667563200) or (t > 1667610000 and t < 1667649600) or (t > 1667696400 and t < 1667736000) and discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles:
         await ctx.send("The hunt is currently closed, please wait until 8 AM to enter codes or request hints again.")
         return True
     
-    elif t > 1666065600:
+    elif t > 1667782800+3600:
         await ctx.send("The hunt has closed, all scores are now final!")
         return True
     
@@ -63,7 +63,8 @@ GUILD = CONFIG["guild"]
 
 
 intents = discord.Intents.all()
-bot = commands.Bot(command_prefix='!', intents=intents)
+prefixes = "!", "! "
+bot = commands.Bot(command_prefix=prefixes, intents=intents)
 
 bot.remove_command('help')
 
@@ -95,6 +96,10 @@ async def on_raw_message_edit(msg):
     msg_full = await channel.fetch_message(msg.message_id)
     await bot.process_commands(msg_full)
 
+async def on_message(msg):
+    if msg.channel.id == 1030325000038797403 and ("bitch" in msg.content or "die" in message.content or "fuck" in message.content):
+        await msg.channel.send("10 points from transman!")
+
 '==========================================================================================================================================='
 'Bot Debug Commands'
 
@@ -113,12 +118,16 @@ async def status(ctx):
 
 # Mod Help
 @bot.command(pass_context=True)
-async def modhelp(ctx):
+async def modhelp(ctx, command = ''):
     if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles and ctx.message.author.id not in CONFIG["admins"]: # Ensures that user has proper permissions
         await ctx.send(MESSAGES["noAccess"])
         return
     
-    await ctx.channel.send(MESSAGES["modHelpMessage"])
+    commands = {y.split(" - ")[0]: y for y in [x.strip("\t") for x in list(filter(lambda x: x.startswith("\t"), MESSAGES["modHelpMessage"].strip("```").split("\n")))]}
+    if command in commands:
+        await ctx.send("```\n" + commands[command] + "\n```")
+    else:
+        await ctx.send(MESSAGES["modHelpMessage"])
 
 # Creating A Private Text Channel 
 @bot.command(pass_context=True)
@@ -217,8 +226,12 @@ async def scoreboard(ctx):
     if ctx.message.channel.id not in CONFIG["scoreboard"]: # Error checking
         await ctx.send("Looks like this isn't the right channel for that, try again in the correct location!")
         return
-    
+
     scores = "```" + data.scoreBoard() + "```"
+
+    if scores == "``````":
+        await ctx.send("There are no teams right now!")
+        return
 
     embedded = discord.Embed(title = "LeaderBoard", description=scores, color = 0xF1C40F)
     await ctx.send(embed=embedded)
@@ -433,6 +446,21 @@ async def addstickertolocation(ctx, building='', floor='', name='', code='', *, 
     else:
         await ctx.send(data.addStickerToLocation(building.upper(), floor, name.upper()+code.upper(), location))
 
+
+# Adds a sticker to a location
+@bot.command(pass_context=True)
+async def addstickerlocation(ctx, building='', floor='', name='', code='', *, location=''):
+    if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles and ctx.message.author.id not in CONFIG["admins"]: # Ensures that user has proper permissions
+        await ctx.send(MESSAGES["noAccess"])
+    
+    elif '' in [building, floor, name, code, location] or not floor.isdigit(): # Error checking
+        await ctx.send("Invalid input, make sure your input is in format `!addstickertolocation <building> <floor> <name> <code> <location>`")
+        return
+    
+    else:
+        await ctx.send(data.addStickerToLocation(building.upper(), floor, name.upper()+code.upper(), location))
+
+
 # Adds stickers to a location
 @bot.command(pass_context=True)
 async def addstickerstolocation(ctx, *, stickers):
@@ -486,8 +514,9 @@ async def github(ctx):
 # Sticker code input
 @bot.command(pass_context=True)
 async def code(ctx, codeword='', key=''):
-    if await time_check(ctx):
-        return
+    if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles and ctx.message.author.id not in CONFIG["admins"]: # Ensures that user has proper permissions
+        if await time_check(ctx):
+            return
 
     team = ctx.message.channel
 
@@ -578,14 +607,19 @@ async def createteam(ctx,*,role_name=''):
 
 # Help function
 @bot.command(pass_context=True)
-async def help(ctx):
-    await ctx.send(MESSAGES["helpMessage"])
+async def help(ctx, command=''):
+    commands = {y.split(" - ")[0]: y for y in [x.strip("\t") for x in list(filter(lambda x: x.startswith("\t"), MESSAGES["helpMessage"].strip("```").split("\n")))]}
+    if command in commands:
+        await ctx.send("```\n" + commands[command] + "\n```")
+    else:
+        await ctx.send(MESSAGES["helpMessage"])
 
 # Outputs hints
 @bot.command(pass_context=True)
 async def hint(ctx):
-    if await time_check(ctx):
-        return
+    if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles and ctx.message.author.id not in CONFIG["admins"]: # Ensures that user has proper permissions
+        if await time_check(ctx):
+            return
     
     team = ctx.message.channel
 
@@ -593,7 +627,8 @@ async def hint(ctx):
         await ctx.send(MESSAGES["validMessage"])
         return
 
-    await ctx.send(data.getHint(team.name))
+    for message in data.getHint(team.name):
+        await ctx.send(message)
 
 # Adds user to an existing team
 @bot.command(pass_context=True)
@@ -601,15 +636,15 @@ async def jointeam(ctx, roleName=''):
     if roleName == '': # Error checking
         await ctx.send("Please list a team name to join.")
         return
-
     forbiddenRoles = LISTS["forbidden"]
     if roleName in forbiddenRoles: # Error checking
         await ctx.send("Don't worry, we're smarter than that.")
         return
 
+    roleName = roleName.replace(" ", "-").lower()
     author = ctx.message.author
     if any(role.name == roleName for role in author.roles): # Error checking
-        await ctx.send("You already have a team! Contact a Sticker Person.")
+        await ctx.send("You already have this role! Contact a Sticker Person.")
 
     else:
         roleToAdd = discord.utils.get(ctx.guild.roles, name=roleName)
@@ -625,6 +660,12 @@ async def jointeam(ctx, roleName=''):
 async def score(ctx):
     await ctx.send(data.printScoreAndCount(ctx.message.channel.name))
 
+
+# @bot.command(pass_context=True)
+# async def clear(ctx, number):
+#     if ctx.author.id == 348505251646668800:
+#         number = int(number) #Converting the amount of messages to delete to an integer
+#         await ctx.channel.purge(limit=number)
 '==========================================================================================================================================='
 
 bot.run(TOKEN) # end of bot
