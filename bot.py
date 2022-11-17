@@ -1,6 +1,7 @@
 # bot.py
 
 import json
+import requests
 
 from os.path import exists
 
@@ -115,6 +116,9 @@ async def status(ctx):
 
 '==========================================================================================================================================='
 'Moderation Commands'
+
+
+
 
 # Mod Help
 @bot.command(pass_context=True)
@@ -323,6 +327,14 @@ async def addstickers(ctx, *, stickers):
             continue
         output = data.addStickerToDatabase(sticker[0].upper()+sticker[1].upper(), sticker[2], " ".join(sticker[3:]))
         await ctx.send(output[:7] + " {}".format(sticker[0].upper() + " " + sticker[1].upper()) + output[7:])
+
+# Adds stickers from a csv
+@bot.command()
+async def addfromfile(ctx):
+    attachment_url = ctx.message.attachments[0].url
+    file_request = requests.get(attachment_url)
+    for msg in data.file_input(file_request.text):
+        await ctx.send(msg)
 
 # Removes a sticker from the database
 @bot.command(pass_context=True)

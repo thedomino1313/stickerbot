@@ -474,6 +474,25 @@ def scoreBoard():
     s += ("╚" + "═"*(maxLen +2) + "╩" + "═"*(8) +"╩" + "═"*(8) + "╝" + "\n") # Bottom border
     return s
 
+
+def file_input(f):
+    data = f.replace("\r", '').split("\n")
+    if any([len(x.split(",")) != len(data[0].split(",")) for x in data]):
+        return ["Invalid input, there is an extra comma somewhere."]
+    out = []
+    for line in data[1:]:
+        line = list(map(lambda x: x.strip(), line.split(",")))
+        if addStickerToDatabase(line[1].upper() + line[2], line[4], line[3]) == "Sticker already exists.":
+            out.append(f"Sticker {line[1].upper() + line[2]} already exists.")
+        if addStickerToLocation(line[6], line[7], line[1].upper() + line[2], line[5]) in ['This floor does not exist.', 'This building does not exist.']:
+            return [f"Building {line[6]} either does not exist, or floor {line[7]} does not exist."]
+    if out == '':
+        return ["Successfully added all stickers."]
+    else:
+        return out + ["Successfully added all other stickers."]
+
+
+
 '==========================================================================================================================================='
 'Data Checkers'
 
