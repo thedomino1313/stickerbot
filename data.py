@@ -381,7 +381,7 @@ def getHint(teamName):
     output = [""]
     for sticker in data: # Loops through all stickers and determines if the team can receive a hint for them
         if sticker not in team["stickers"] and [sticker, data[sticker]["hint"]] not in team["hint"] and [sticker, data[sticker]["hint"]] not in team["ghint"]:
-            if data[sticker]["points"] == '1' or data[sticker]["points"] == '3':
+            if data[sticker]["points"] != '10':
                 hints.append((sticker, data[sticker]["hint"]))
             else:
                 ghints.append((sticker, data[sticker]["hint"]))
@@ -392,11 +392,11 @@ def getHint(teamName):
         team["lastnewhint"] = time()
         newh = True
     
-    # newghint = False # Bool to see if a new hint is added
-    # if team["count"] >= 20 and team["ghintcomplete"] and len(ghints) > 0: # Validating
-    #     team["ghintcomplete"] = False
-    #     team["ghint"].append(choice(ghints))
-    #     newghint = True
+    newghint = False # Bool to see if a new hint is added
+    if team["count"] >= 20 and team["ghintcomplete"] and len(ghints) > 0: # Validating
+        team["ghintcomplete"] = False
+        team["ghint"].append(choice(ghints))
+        newghint = True
     
     if len(hints) == 0: # Logic for basic hint message
         output[-1] += "You have no more hints to unlock.\n"
@@ -416,23 +416,23 @@ def getHint(teamName):
             output += [""]
         output[-1] += hint[1] + "\n"
     
-    # if len(ghints) == 0: # Logic for basic hint message
-    #     output[-1] += "You have no more special hints to unlock.\n"
-    # elif newghint:
-    #     output[-1] += "You have a new special hint!\n"
-    # elif team["count"] < 20: 
-    #     output[-1] += "You have {} more stickers to find until you can receive another special hint.\n".format(20 - (team["count"]%20))
-    # else:
-    #     output[-1] += "You will recieve another special hint when you complete your current one."
+    if len(ghints) == 0: # Logic for basic hint message
+        output[-1] += "You have no more special hints to unlock.\n"
+    elif newghint:
+        output[-1] += "You have a new special hint!\n"
+    elif team["count"] < 20: 
+        output[-1] += "You have {} more stickers to find until you can receive another special hint.\n".format(20 - (team["count"]%20))
+    else:
+        output[-1] += "You will recieve another special hint when you complete your current one."
     
-    # if len(team["ghint"]) == 0: # Logic for listing all standard hints
-    #     output[-1] += "You currently have no available special hints.\n"
-    # elif len(team["ghint"]) == 1:
-    #     output[-1] += "You currently have one available special hint:\n"
-    # else:
-    #     output[-1] += "You have {} available special hints:\n".format(len(team["ghint"]))
-    # for hint in team["ghint"]:
-    #     output[-1] += hint[1] + "\n"
+    if len(team["ghint"]) == 0: # Logic for listing all standard hints
+        output[-1] += "You currently have no available special hints.\n"
+    elif len(team["ghint"]) == 1:
+        output[-1] += "You currently have one available special hint:\n"
+    else:
+        output[-1] += "You have {} available special hints:\n".format(len(team["ghint"]))
+    for hint in team["ghint"]:
+        output[-1] += hint[1] + "\n"
 
     teams = getTeams()
     teams[teamName] = team
