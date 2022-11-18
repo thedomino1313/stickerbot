@@ -324,11 +324,9 @@ def teamprogress(team):
 
 # Adds a sticker to a team's collection
 def addSticker(teamName, stickerName, stickerCode):
-    stickerName = stickerName.upper()
-    stickerCode = stickerCode.upper()
-    info = getData()
     teams = getTeams()
-    full_name = stickerName + stickerCode # Outdated collection takes the code in two pieces, will probably fix eventually
+    full_name = stickerName.upper() + stickerCode.upper()
+    info = getData() # Outdated collection takes the code in two pieces, will probably fix eventually
     teamName = processString(teamName) # Converts unicode emojis into a JSON safe format
     if full_name not in info: # Error checking
         return "This sticker does not exist, please check your code."
@@ -475,16 +473,17 @@ def scoreBoard():
     return s
 
 
+# timestamp, name, code, hint, points, location, building, floor,
 def file_input(f):
-    data = f.replace("\r", '').replace('"', '').replace("\\", '').split("\n")
+    data = f.replace("\r", '').replace('"', '').replace("\\", '').strip().split("\n")
     if any([len(x.split(",")) != len(data[0].split(",")) for x in data]):
         return ["Invalid input, there is an extra comma somewhere."]
     out = []
     for line in data[1:]:
         line = list(map(lambda x: x.strip(), line.split(",")))
-        if addStickerToDatabase(line[1].upper() + line[2], line[4], line[3]) == "Sticker already exists.":
-            out.append(f"Sticker {line[1].upper() + line[2]} already exists.")
-        if addStickerToLocation(line[6], line[7], line[1].upper() + line[2], line[5]) in ['This floor does not exist.', 'This building does not exist.']:
+        if addStickerToDatabase(line[1].upper() + line[2].upper(), line[4], line[3]) == "Sticker already exists.":
+            out.append(f"Sticker {line[1].upper() + line[2].upper()} already exists.")
+        if addStickerToLocation(line[6], line[7], line[1].upper() + line[2].upper(), line[5]) in ['This floor does not exist.', 'This building does not exist.']:
             return [f"Building {line[6]} either does not exist, or floor {line[7]} does not exist."]
     if out == '':
         return ["Successfully added all stickers."]
