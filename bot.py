@@ -451,7 +451,7 @@ async def addstickertolocation(ctx, building='', floor='', name='', code='', *, 
     if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles and ctx.message.author.id not in CONFIG["admins"]: # Ensures that user has proper permissions
         await ctx.send(MESSAGES["noAccess"])
     
-    elif '' in [building, floor, name, code, location] or not floor.isdigit(): # Error checking
+    elif '' in [building, floor, name, code, location] or (not floor.isdigit() and floor != "G"): # Error checking
         await ctx.send("Invalid input, make sure your input is in format `!addstickertolocation <building> <floor> <name> <code> <location>`")
         return
     
@@ -494,7 +494,7 @@ async def removestickerfromlocation(ctx, building='', floor='', name='', code=''
     if discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles and ctx.message.author.id not in CONFIG["admins"]: # Ensures that user has proper permissions
         await ctx.send(MESSAGES["noAccess"])
     
-    elif '' in [building, floor, name, code] or not floor.isdigit(): # Error checking
+    elif '' in [building, floor, name, code] or (not floor.isdigit() and floor != "G"): # Error checking
         await ctx.send("Invalid input, make sure your input is in format `!removestickerfromlocation <building> <floor> <name> <code>`")
         return
     
