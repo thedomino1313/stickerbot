@@ -423,7 +423,7 @@ def getHint(teamName):
     elif team["count"] < 20: 
         output[-1] += "You have {} more stickers to find until you can receive another special hint.\n".format(20 - (team["count"]%20))
     else:
-        output[-1] += "You will recieve another special hint when you complete your current one."
+        output[-1] += "You will recieve another special hint when you complete your current one.\n"
     
     if len(team["ghint"]) == 0: # Logic for listing all standard hints
         output[-1] += "You currently have no available special hints.\n"
