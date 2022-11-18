@@ -571,7 +571,7 @@ async def createteam(ctx,*,role_name=''):
     check_for_duplicate = get(ctx.message.guild.roles, name=role_name) # check if that role already exists
 
     if check_for_duplicate == None:
-        authorize_role  = await guild.create_role(name=role_name, colour=discord.Colour(0x0000FF))
+        authorize_role  = await guild.create_role(name=role_name, colour=discord.Colour(0x3498DB))
 
         sPeople =  discord.utils.get(guild.roles, name="@Sticker People")
         codePeople =  discord.utils.get(guild.roles, name="Leather Jacket Enthusiast and Helper")
