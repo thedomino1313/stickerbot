@@ -475,7 +475,7 @@ def scoreBoard():
 
 # timestamp, name, code, hint, points, location, building, floor,
 def file_input(f):
-    data = f.replace("\r", '').replace('"', '').replace("\\", '').split("\n")
+    data = f.replace("\r", '').replace('"', '').replace("\\", '').strip().split("\n")
     if any([len(x.split(",")) != len(data[0].split(",")) for x in data]):
         return ["Invalid input, there is an extra comma somewhere."]
     out = []
