@@ -45,7 +45,7 @@ def replaceEmojis(word): # Converts unicode emojis to an empty box for scoreboar
     return s
 
 def namesplit(code):
-    names = ["WIND", "FUSE", "VIPER", "WMAP", "FORGE", "MILL", "SHUTTLE", "RANGER", "POES", "APOLLO", "ICESAT", "OCO", "GEMINI", "STEREO", "PACE", "SOYUZ", "POLUX", "GLOBE", "GRACE", "GRAIL", "CUBESAT", "S00", "RIGEL", "ACRUX", "TDRS", "VAP", "RRS", "UARS"]
+    names = ['mercury', 'venus', 'earth', 'jupiter', 'mars', 'pluto', 'saturn', 'uranus', 'neptune', 'apollo1', 'apollo2', 'apollo3', 'apollo4', 'apollo5', 'apollo6', 'apollo7', 'apollo8', 'apollo9', 'apollo10', 'apollo11', 'apollo12', 'apollo13', 'rocket', 'space', 'moon', 'lander', 'flight', 'fly', 'fuel', 'buzz', 'carbon', 'oxygen', 'ares', 'life', 'nasa', 'rover', 'boost', 'cosmo', 'star', 'nova', 'blkhole', 'galaxy', 'curious', 'alpha', 'bravo', 'charlie', 'delta', 'echo', 'foxtrot', 'golf', 'hotel', 'india', 'julliet', 'kilo', 'lima', 'mike', 'oscar', 'papa', 'romeo', 'sierra', 'tango', 'x-ray', 'zulu', 'marty', 'meteor', 'asteroid', 'astro', 'bigbang', 'dwarf', 'centaur', 'comet', 'corona', 'cosmic', 'dust', 'debris', 'node', 'epoch', 'equator', 'velocity', 'thrust', 'flare', 'gas', 'giant', 'helios', 'planet', 'kepler', 'belt', 'lunar', 'magnet', 'clouds', 'nebula', 'neutron', 'opaque', 'orbit', 'plane', 'speed', 'fast', 'phase', 'polar', 'quasar', 'radio', 'sat', 'axis', 'day', 'night', 'time', 'spiral', 'gravity', 'period', 'super', 'tidal', 'stream', 'erosion', 'twilight', 'taurus', 'gemini', 'cancer', 'leo', 'viro', 'libra', 'scorpio', 'pisces', 'lens', 'prop', 'retro', 'transit', 'journey', 'venture', 'voyage', 'pioneer', 'engineer', 'scientist', 'zenith', 'waning', 'waxing', 'tech', 'innovate', 'make', 'create', 'build', 'hubble', 'galilei', 'cassini', 'newton', 'halley', 'messier', 'herschel', 'piazzi', 'laplace', 'bessel', 'lassell', 'barnard', 'pickering', 'draper', 'lockyer', 'artemis', 'atlas', 'electron', 'falcon', 'iss', 'angara', 'ceres', 'hyperbola', 'pegasus', 'icarus', 'proton', 'simorgh', 'vega', 'unha', 'alpha', 'beta', 'gamme', 'delta', 'epsilon', 'zeta', 'eta', 'theta', 'iota', 'kappa', 'lambda', 'mu', 'nu', 'xi', 'omicron', 'pi', 'rho', 'sigma', 'tau', 'upsilon', 'phi', 'chi', 'psi', 'omega']
     for name in names:
         if name in code:
             code = code[0:len(name)] + " " + code[len(name):]
@@ -203,6 +203,7 @@ def addLocationToDatabase(building, floors):
 
 # Adds a sticker to a location
 def addStickerToLocation(building, floor, sticker, location):
+    building = building.upper()
     loc = getLocations()
     info = getData()
     if building in loc:
@@ -323,9 +324,9 @@ def teamprogress(team):
 
 # Adds a sticker to a team's collection
 def addSticker(teamName, stickerName, stickerCode):
-    info = getData()
     teams = getTeams()
-    full_name = stickerName + stickerCode # Outdated collection takes the code in two pieces, will probably fix eventually
+    full_name = stickerName.upper() + stickerCode.upper()
+    info = getData() # Outdated collection takes the code in two pieces, will probably fix eventually
     teamName = processString(teamName) # Converts unicode emojis into a JSON safe format
     if full_name not in info: # Error checking
         return "This sticker does not exist, please check your code."
@@ -341,13 +342,13 @@ def addSticker(teamName, stickerName, stickerCode):
         if any(full_name == x[0] for x in teams[teamName]["hint"]): # Checks if the sticker found relates to a hint that the team has unlocked
             s += "\nYou have cleared the standard hint: {}".format(teams[teamName]["hint"].pop(teams[teamName]["hint"].index([full_name, getData()[full_name]["hint"]]))[1])
         if any(full_name == x[0] for x in teams[teamName]["ghint"]): # Checks if the sticker found relates to the team's special hint
-            teams[teamName]["ghintcomplete"] = True 
             s += "\nYou have cleared the special hint: {}".format(teams[teamName]["ghint"].pop(teams[teamName]["ghint"].index([full_name, getData()[full_name]["hint"]]))[1])
             teams[teamName]["ghint"] = []
+            teams[teamName]["ghintcomplete"] = True
         if len(teams[teamName]["stickers"]) == len(info): # Checks if the team has found every sticker
             s += "\nYou have found all of the stickers!"
-        if teams[teamName]["count"] % 20 == 0:
-            teams[teamName]["ghintcomplete"] = False
+        if teams[teamName]["count"] == 20:
+            teams[teamName]["ghintcomplete"] = True
         jdump(jteams, teams)
         return s
 
@@ -375,9 +376,10 @@ def getHint(teamName):
     data = getData()
     hints = []
     ghints = []
+    output = [""]
     for sticker in data: # Loops through all stickers and determines if the team can receive a hint for them
         if sticker not in team["stickers"] and [sticker, data[sticker]["hint"]] not in team["hint"] and [sticker, data[sticker]["hint"]] not in team["ghint"]:
-            if data[sticker]["points"] == '1':
+            if data[sticker]["points"] != '10':
                 hints.append((sticker, data[sticker]["hint"]))
             else:
                 ghints.append((sticker, data[sticker]["hint"]))
@@ -389,42 +391,46 @@ def getHint(teamName):
         newh = True
     
     newghint = False # Bool to see if a new hint is added
-    if team["count"] >= 20 and not team["ghintcomplete"] and len(ghints) > 0: # Validating
+    if team["count"] >= 20 and team["ghintcomplete"] and len(ghints) > 0: # Validating
+        team["ghintcomplete"] = False
         team["ghint"].append(choice(ghints))
         newghint = True
     
-    output = ''
     if len(hints) == 0: # Logic for basic hint message
-        output += "You have no more hints to unlock.\n"
+        output[-1] += "You have no more hints to unlock.\n"
     elif newh:
-        output += "You have a new hint!\n"
+        output[-1] += "You have a new hint!\n"
     else: 
-        output += "You have {:.2f} more minutes until you can receive another standard hint.\n".format(30-((time()-team["lastnewhint"])/60))
+        output[-1] += "You have {:.2f} more minutes until you can receive another standard hint.\n".format(30-((time()-team["lastnewhint"])/60))
     
     if len(team["hint"]) == 0: # Logic for listing all standard hints
-        output += "You currently have no available standard hints.\n"
+        output[-1] += "You currently have no available standard hints.\n"
     elif len(team["hint"]) == 1:
-        output += "You currently have one available standard hint:\n"
+        output[-1] += "You currently have one available standard hint:\n"
     else:
-        output += "You have {} available standard hints:\n".format(len(team["hint"]))
+        output[-1] += "You have {} available standard hints:\n".format(len(team["hint"]))
     for hint in team["hint"]:
-        output += hint[1] + "\n"
+        if len(output[-1] + hint[1] + "\n") >= 2000:
+            output += [""]
+        output[-1] += hint[1] + "\n"
     
     if len(ghints) == 0: # Logic for basic hint message
-        output += "You have no more special hints to unlock.\n"
+        output[-1] += "You have no more special hints to unlock.\n"
     elif newghint:
-        output += "You have a new special hint!\n"
-    else: 
-        output += "You have {} more stickers to find until you can receive another special hint.\n".format(20 - (team["count"]%20))
+        output[-1] += "You have a new special hint!\n"
+    elif team["count"] < 20: 
+        output[-1] += "You have {} more stickers to find until you can receive another special hint.\n".format(20 - (team["count"]%20))
+    else:
+        output[-1] += "You will recieve another special hint when you complete your current one.\n"
     
     if len(team["ghint"]) == 0: # Logic for listing all standard hints
-        output += "You currently have no available special hints.\n"
+        output[-1] += "You currently have no available special hints.\n"
     elif len(team["ghint"]) == 1:
-        output += "You currently have one available special hint:\n"
+        output[-1] += "You currently have one available special hint:\n"
     else:
-        output += "You have {} available special hints:\n".format(len(team["ghint"]))
+        output[-1] += "You have {} available special hints:\n".format(len(team["ghint"]))
     for hint in team["ghint"]:
-        output += hint[1] + "\n"
+        output[-1] += hint[1] + "\n"
 
     teams = getTeams()
     teams[teamName] = team
@@ -436,6 +442,9 @@ def scoreBoard():
     teams = getTeams()
     scoreDict = dict()
     maxLen = 0
+
+    if not teams:
+        return ''
 
     for team in teams: # Finds the longest team name, and adds their score and counts to a dictionary
         team = revertString(team)
@@ -463,6 +472,26 @@ def scoreBoard():
     s += ("╚" + "═"*(maxLen +2) + "╩" + "═"*(8) +"╩" + "═"*(8) + "╝" + "\n") # Bottom border
     return s
 
+
+# timestamp, name, code, hint, points, location, building, floor,
+def file_input(f):
+    data = f.replace("\r", '').replace('"', '').replace("\\", '').strip().split("\n")
+    if any([len(x.split(",")) != len(data[0].split(",")) for x in data]):
+        return ["Invalid input, there is an extra comma somewhere."]
+    out = []
+    for line in data[1:]:
+        line = list(map(lambda x: x.strip(), line.split(",")))
+        if addStickerToDatabase(line[1].upper() + line[2].upper(), line[4], line[3]) == "Sticker already exists.":
+            out.append(f"Sticker {line[1].upper() + line[2].upper()} already exists.")
+        if addStickerToLocation(line[6], line[7], line[1].upper() + line[2].upper(), line[5]) in ['This floor does not exist.', 'This building does not exist.']:
+            return [f"Building {line[6]} either does not exist, or floor {line[7]} does not exist."]
+    if out == '':
+        return ["Successfully added all stickers."]
+    else:
+        return out + ["Successfully added all other stickers."]
+
+
+
 '==========================================================================================================================================='
 'Data Checkers'
 
@@ -486,4 +515,6 @@ def checkequivalence():
         s += "\nThese stickers are in the main sticker data, but not in the locations list:\n"
         for sticker in dataSticks-locSticks:
             s += sticker + " "
+    if not s:
+        return "All stickers match!"
     return s
