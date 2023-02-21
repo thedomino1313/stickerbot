@@ -222,6 +222,13 @@ async def removeteam(ctx, *, teams=''):
                     await role.delete() # Removes the team role
             await ctx.send(results)
 
+@bot.command(pass_context=True)
+async def removeall(ctx):
+    if ctx.message.author.id != 348505251646668800:
+        await ctx.send("good try tyr")
+        return
+    await removeteam(ctx, teams=' '.join(list(data.getTeams().keys())))
+
 # Scoreboard Generation
 @bot.command(pass_context=True)
 async def scoreboard(ctx):
