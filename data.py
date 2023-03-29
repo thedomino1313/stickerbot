@@ -79,10 +79,10 @@ def printStickers():
     returnlist = []
     s = '```\n'
     for sticker in stickers:
-        if len(s) + len(namesplit(sticker).ljust(15) + stickers[sticker]["points"] + " " + stickers[sticker]["hint"] + "\n") + 3 >= 2000:
+        if len(s) + len(namesplit(sticker).ljust(15) + str(stickers[sticker]["points"]) + " " + stickers[sticker]["hint"] + "\n") + 3 >= 2000:
             returnlist.append(s+"```")
             s = '```\n'
-        s += namesplit(sticker).ljust(15) + stickers[sticker]["points"] + " " + stickers[sticker]["hint"] + "\n"
+        s += namesplit(sticker).ljust(15) + str(stickers[sticker]["points"]) + " " + stickers[sticker]["hint"] + "\n"
     returnlist.append(s+"```")
     return returnlist
 
@@ -379,7 +379,7 @@ def getHint(teamName):
     output = [""]
     for sticker in data: # Loops through all stickers and determines if the team can receive a hint for them
         if sticker not in team["stickers"] and [sticker, data[sticker]["hint"]] not in team["hint"] and [sticker, data[sticker]["hint"]] not in team["ghint"]:
-            if data[sticker]["points"] != '10':
+            if int(data[sticker]["points"]) < 10:
                 hints.append((sticker, data[sticker]["hint"]))
             else:
                 ghints.append((sticker, data[sticker]["hint"]))
@@ -401,7 +401,7 @@ def getHint(teamName):
     elif newh:
         output[-1] += "You have a new hint!\n"
     else: 
-        output[-1] += "You have {:.2f} more minutes until you can receive another standard hint.\n".format(30-((time()-team["lastnewhint"])/60))
+        output[-1] += "You can receive another standard hint <t:{}:R>.\n".format(int(team["lastnewhint"]+1800))
     
     if len(team["hint"]) == 0: # Logic for listing all standard hints
         output[-1] += "You currently have no available standard hints.\n"
@@ -410,7 +410,7 @@ def getHint(teamName):
     else:
         output[-1] += "You have {} available standard hints:\n".format(len(team["hint"]))
     for hint in team["hint"]:
-        if len(output[-1] + hint[1] + "\n") >= 2000:
+        if len(output[-1] + hint[1] + "\n") >= 1900:
             output += [""]
         output[-1] += hint[1] + "\n"
     
@@ -475,17 +475,22 @@ def scoreBoard():
 
 # timestamp, name, code, hint, points, location, building, floor,
 def file_input(f):
+    sticks = open("out.csv", 'r')
+    ref = {}
+    for line in sticks.read().split("\n"):
+        line = line.split(",")
+        ref[line[0].strip()] = (line[1].strip(), int(line[2].strip()))
     data = f.replace("\r", '').replace('"', '').replace("\\", '').strip().split("\n")
     if any([len(x.split(",")) != len(data[0].split(",")) for x in data]):
         return ["Invalid input, there is an extra comma somewhere."]
     out = []
-    for line in data[1:]:
+    for line in data:
         line = list(map(lambda x: x.strip(), line.split(",")))
-        if addStickerToDatabase(line[1].upper() + line[2].upper(), line[4], line[3]) == "Sticker already exists.":
-            out.append(f"Sticker {line[1].upper() + line[2].upper()} already exists.")
-        if addStickerToLocation(line[6], line[7], line[1].upper() + line[2].upper(), line[5]) in ['This floor does not exist.', 'This building does not exist.']:
-            return [f"Building {line[6]} either does not exist, or floor {line[7]} does not exist."]
-    if out == '':
+        if addStickerToDatabase(line[1].upper() + ref[line[1]][0], str(ref[line[1]][1]), line[3]) == "Sticker already exists.":
+            out.append(f"Sticker {line[1].upper() + ref[line[1]][0]} already exists.")
+        if addStickerToLocation("JEC", line[4], line[1].upper() + ref[line[1]][0], line[4]) in ['This floor does not exist.', 'This building does not exist.']:
+            return [f"Building JEC either does not exist, or floor {line[4]} does not exist."]
+    if out == []:
         return ["Successfully added all stickers."]
     else:
         return out + ["Successfully added all other stickers."]

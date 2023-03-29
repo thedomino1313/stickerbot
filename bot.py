@@ -11,7 +11,7 @@ from discord.utils import get  # gets the finding functions
 
 import data
 
-
+FOUND = False
 # Makes sure that the bot has been initialized correctly
 def check_configured():
     if not exists("./config/config.json"):
@@ -35,15 +35,15 @@ def check_configured():
 
 async def time_check(ctx):
     t = time()
-    if t < 1668772800:
+    if t < 1679738400:
         await ctx.send("The hunt hasn't started yet!")
         return True
     
-    elif (t > 1668834000 and t < 1668859200) or (t > 1668920400 and t < 1668945600) or (t > 1669006800 and t < 1669032000) and discord.utils.get(ctx.guild.roles, name="Sticker People") not in ctx.message.author.roles:
-        await ctx.send("The hunt is currently closed, please wait until 8 AM to enter codes or request hints again.")
+    elif (t > 1679796000 and t < 1679824800) or (t > 1679882400 and t < 1679911200) or (t > 1679968800 and t < 1679997600) or (t > 1680055200 and t < 1680084000) or (t > 1680141600 and t < 1680170400) or (t > 1680228000 and t < 1680256800) and discord.utils.get(ctx.guild.roles, name="Sticker People") not in ctx.message.author.roles:
+        await ctx.send("The hunt is currently closed, please wait until the building opens to enter codes or request hints again.")
         return True
     
-    elif t > 1669086000:
+    elif t > 1680314400:
         await ctx.send("The hunt has closed, all scores are now final!")
         return True
     
@@ -544,7 +544,15 @@ async def code(ctx, codeword='', key=''):
     if codeword == '' or key == '': # Error checking
         await ctx.send("Invalid input, make sure your input is in format `!code <sticker> <authCode>`")
         return
-
+    
+    if codeword.lower() == 'mercury':
+        if FOUND:
+            await ctx.send("This sticker was not added to the database, bopbop has already been notified and the issue will be fixed soon.")
+        else:
+            FOUND = True
+            await ctx.send("<@348505251646668800> the missing sticker has been found.")
+            await ctx.send(f"<@{ctx.author.id}>; please tell me the floor, color, exact location of this sticker, and a suitable hint for other competitors.")
+        return
     await ctx.send(data.addSticker(ctx.channel.name, codeword, key))
 
 # Creates a new team and adds the founding member 
