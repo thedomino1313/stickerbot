@@ -34,16 +34,19 @@ def check_configured():
     return ""
 
 async def time_check(ctx):
+    fm = 1695380400 # first morning
+    fn = 1695430800 # first night
+    diff = 86400    # time in one day
+    days = 8
+
     t = time()
-    if t < 1668772800:
+    if t < fm:
         await ctx.send("The hunt hasn't started yet!")
         return True
-    
-    elif (t > 1668834000 and t < 1668859200) or (t > 1668920400 and t < 1668945600) or (t > 1669006800 and t < 1669032000) and discord.utils.get(ctx.guild.roles, name="Sticker People") not in ctx.message.author.roles:
+    elif any(map(lambda x: t < x[0] and t > x[1], [(fn + (diff * i), fm + (diff * (i + 1))) for i in range(days)])) and discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles:
         await ctx.send("The hunt is currently closed, please wait until 8 AM to enter codes or request hints again.")
         return True
-    
-    elif t > 1669086000:
+    elif t > fn + (diff * days):
         await ctx.send("The hunt has closed, all scores are now final!")
         return True
     
