@@ -473,10 +473,10 @@ def scoreBoard():
     return s
 
 
-# timestamp, name, code, hint, points, location, building, floor,
+# timestamp, name, color, hint, building, floor, location, picture
 def file_input(f):
-    sticks = open("out.csv", 'r')
-    ref = {}
+    sticks = open("data.csv", 'r')
+    ref = dict()
     for line in sticks.read().split("\n"):
         line = line.split(",")
         ref[line[0].strip()] = (line[1].strip(), int(line[2].strip()))
@@ -488,7 +488,7 @@ def file_input(f):
         line = list(map(lambda x: x.strip(), line.split(",")))
         if addStickerToDatabase(line[1].upper() + ref[line[1]][0], str(ref[line[1]][1]), line[3]) == "Sticker already exists.":
             out.append(f"Sticker {line[1].upper() + ref[line[1]][0]} already exists.")
-        if addStickerToLocation("JEC", line[4], line[1].upper() + ref[line[1]][0], line[4]) in ['This floor does not exist.', 'This building does not exist.']:
+        if addStickerToLocation(line[4], line[5], line[1].upper() + ref[line[1]][0], line[6]) in ['This floor does not exist.', 'This building does not exist.']:
             return [f"Building JEC either does not exist, or floor {line[4]} does not exist."]
     if out == []:
         return ["Successfully added all stickers."]
