@@ -484,7 +484,7 @@ def file_input(f):
     if any([len(x.split(",")) != len(data[0].split(",")) for x in data]):
         return ["Invalid input, there is an extra comma somewhere."]
     out = []
-    for line in data:
+    for line in data[1:]:
         line = list(map(lambda x: x.strip(), line.split(",")))
         if addStickerToDatabase(line[1].upper() + ref[line[1]][0], str(ref[line[1]][1]), line[3]) == "Sticker already exists.":
             out.append(f"Sticker {line[1].upper() + ref[line[1]][0]} already exists.")
