@@ -489,7 +489,7 @@ def file_input(f):
         if addStickerToDatabase(line[1].upper() + ref[line[1]][0], str(ref[line[1]][1]), line[3]) == "Sticker already exists.":
             out.append(f"Sticker {line[1].upper() + ref[line[1]][0]} already exists.")
         if addStickerToLocation(line[4], line[5], line[1].upper() + ref[line[1]][0], line[6]) in ['This floor does not exist.', 'This building does not exist.']:
-            return [f"Building JEC either does not exist, or floor {line[4]} does not exist."]
+            return [f"Building West either does not exist, or floor {line[4]} does not exist."]
     if out == []:
         return ["Successfully added all stickers."]
     else:

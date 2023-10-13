@@ -34,10 +34,10 @@ def check_configured():
     return ""
 
 async def time_check(ctx):
-    fm = 1695380400 # first morning
-    fn = 1695430800 # first night
+    fm = 1697194800 # first morning
+    fn = 1697256000 # first night
     diff = 86400    # time in one day
-    days = 8
+    days = 7
 
     t = time()
     if t < fm:
@@ -571,6 +571,10 @@ async def createteam(ctx,*,role_name=''):
     
     if "#" in role_name:
         await ctx.send("No hashtags allowed in team names >:(")
+        return
+    
+    if not role_name.isalnum():
+        await ctx.send("No special characters allowed in team names >:(")
         return
 
     while "  " in role_name: # Removes excess spaces
