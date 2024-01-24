@@ -34,17 +34,17 @@ def check_configured():
     return ""
 
 async def time_check(ctx):
-    fm = 1697194800 # first morning
-    fn = 1697256000 # first night
+    fm = 1700496000 # first morning
+    fn = 1700539200 # first night
     diff = 86400    # time in one day
-    days = 7
+    days = 14
 
     t = time()
     if t < fm:
         await ctx.send("The hunt hasn't started yet!")
         return True
     elif any(map(lambda x: t > x[0] and t < x[1], [(fn + (diff * i), fm + (diff * (i + 1))) for i in range(days)])) and discord.utils.get(ctx.guild.roles, name="@Sticker People") not in ctx.message.author.roles:
-        await ctx.send("The hunt is currently closed, please wait until 8 AM to enter codes or request hints again.")
+        await ctx.send("The hunt is currently closed, please wait until 11 AM to enter codes or request hints again.")
         return True
     elif t > fn + (diff * days):
         await ctx.send("The hunt has closed, all scores are now final!")
