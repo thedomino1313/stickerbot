@@ -11,7 +11,7 @@ from discord.utils import get  # gets the finding functions
 
 import data
 
-
+FOUND = False
 # Makes sure that the bot has been initialized correctly
 def check_configured():
     if not exists("./config/config.json"):
@@ -224,6 +224,13 @@ async def removeteam(ctx, *, teams=''):
                     role = discord.utils.get(ctx.guild.roles, name=team.upper())
                     await role.delete() # Removes the team role
             await ctx.send(results)
+
+@bot.command(pass_context=True)
+async def removeall(ctx):
+    if ctx.message.author.id != 348505251646668800:
+        await ctx.send("good try tyr")
+        return
+    await removeteam(ctx, teams=' '.join(list(data.getTeams().keys())))
 
 # Scoreboard Generation
 @bot.command(pass_context=True)
@@ -540,7 +547,15 @@ async def code(ctx, codeword='', key=''):
     if codeword == '' or key == '': # Error checking
         await ctx.send("Invalid input, make sure your input is in format `!code <sticker> <authCode>`")
         return
-
+    
+    if codeword.lower() == 'mercury':
+        if FOUND:
+            await ctx.send("This sticker was not added to the database, bopbop has already been notified and the issue will be fixed soon.")
+        else:
+            FOUND = True
+            await ctx.send("<@348505251646668800> the missing sticker has been found.")
+            await ctx.send(f"<@{ctx.author.id}>; please tell me the floor, color, exact location of this sticker, and a suitable hint for other competitors.")
+        return
     await ctx.send(data.addSticker(ctx.channel.name, codeword, key))
 
 # Creates a new team and adds the founding member 
@@ -556,6 +571,10 @@ async def createteam(ctx,*,role_name=''):
     
     if "#" in role_name:
         await ctx.send("No hashtags allowed in team names >:(")
+        return
+    
+    if not role_name.isalnum():
+        await ctx.send("No special characters allowed in team names >:(")
         return
 
     while "  " in role_name: # Removes excess spaces
