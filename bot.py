@@ -99,8 +99,7 @@ async def on_raw_message_edit(msg):
     await bot.process_commands(msg_full)
 
 async def on_message(msg):
-    if msg.channel.id == 1030325000038797403 and ("bitch" in msg.content or "die" in msg.content or "fuck" in msg.content):
-        await msg.channel.send("10 points from transman!")
+    pass
 
 '==========================================================================================================================================='
 'Bot Debug Commands'
