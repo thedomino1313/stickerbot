@@ -53,8 +53,8 @@ async def time_check(ctx):
     return False
 
 # Ensure that the user has set up the needed config files.
-if check_configured() != "":
-    exit(check_configured())
+if (message := check_configured()) != "":
+    exit(message)
 
 MESSAGES = json.load(open("./config/messages.json"))
 LISTS = json.load(open("./config/lists.json"))
