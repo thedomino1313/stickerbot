@@ -1,5 +1,5 @@
 import json
-from random import choic
+from random import choice
 from time import time, sleep
 from pyautogui import press
 
