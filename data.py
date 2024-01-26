@@ -1,6 +1,7 @@
 import json
-from random import choice
-from time import time
+from random import choic
+from time import time, sleep
+from pyautogui import press
 
 '==========================================================================================================================================='
 'Constants'
@@ -523,3 +524,17 @@ def checkequivalence():
     if not s:
         return "All stickers match!"
     return s
+
+def googleForm():
+    sleep(5)
+    f = open("data.csv", 'r')
+    words = []
+    for line in f:
+        words.append(line.split(",")[0])
+    words.sort()
+    f.close()
+    for word in words:
+        for letter in word:
+            press(letter)
+        press("enter")
+    exit()
